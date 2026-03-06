@@ -1,0 +1,13 @@
+{
+  "name": "@sturage/shared",
+  "version": "1.0.0",
+  "description": "Shared types and utilities for STURage",
+  "main": "src/index.ts",
+  "scripts": {
+    "lint": "eslint src --ext .ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

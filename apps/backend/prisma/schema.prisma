@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  OPERATOR
+  VIEWER
+}
+
+enum MovementType {
+  INBOUND
+  OUTBOUND
+  TRANSFER
+  ADJUSTMENT
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      Role     @default(OPERATOR)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stockMovements StockMovement[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Supplier {
+  id          String    @id @default(cuid())
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  address     String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products Product[]
+
+  @@map("suppliers")
+}
+
+model Warehouse {
+  id          String    @id @default(cuid())
+  name        String
+  location    String
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  inventory StockItem[]
+
+  @@map("warehouses")
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  sku         String    @unique
+  name        String
+  description String?
+  unit        String    @default("pcs")
+  minStock    Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  supplierId String?
+  supplier   Supplier? @relation(fields: [supplierId], references: [id])
+
+  stockItems     StockItem[]
+  stockMovements StockMovement[]
+
+  @@map("products")
+}
+
+model StockItem {
+  id        String   @id @default(cuid())
+  quantity  Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+  warehouseId String
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+
+  @@unique([productId, warehouseId])
+  @@map("stock_items")
+}
+
+model StockMovement {
+  id        String       @id @default(cuid())
+  type      MovementType
+  quantity  Int
+  note      String?
+  createdAt DateTime     @default(now())
+
+  productId         String
+  product           Product   @relation(fields: [productId], references: [id])
+  createdById       String
+  createdBy         User      @relation(fields: [createdById], references: [id])
+  sourceWarehouseId String?
+  targetWarehouseId String?
+
+  @@map("stock_movements")
+}
