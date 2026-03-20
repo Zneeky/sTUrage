@@ -6,7 +6,7 @@ COPY apps/backend/package.json ./apps/backend/
 COPY apps/frontend/package.json ./apps/frontend/
 COPY packages/shared/package.json ./packages/shared/
 
-RUN npm ci
+RUN npm ci && apk add --no-cache openssl
 
 # ── Development ────────────────────────────────────────────
 FROM base AS development
@@ -25,6 +25,7 @@ RUN npx prisma generate --schema=apps/backend/prisma/schema.prisma && \
 
 # ── Production ─────────────────────────────────────────────
 FROM node:20-alpine AS production
+RUN apk add --no-cache openssl
 WORKDIR /app
 
 COPY --from=builder /app/apps/backend/dist ./dist
