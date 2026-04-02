@@ -1,8 +1,8 @@
 // ============================================================
 // STURage — Prisma Schema
-// STUR-6 | Sprint 1
+// Sprint 1: STUR-6 | Sprint 2: STUR-13, STUR-15, STUR-77
 //
-// This file is the single source of truth for the database.
+// Single source of truth for the database.
 // After every change:
 //   npx prisma migrate dev --name <description>
 //   npx prisma generate
@@ -19,11 +19,6 @@ datasource db {
 
 // ── Enums ────────────────────────────────────────────────────
 
-// Role controls what a user can do in the API.
-// ADMIN    — full access including user management and deletions
-// MANAGER  — create/edit products, categories, suppliers, stock movements
-// OPERATOR — create stock movements only
-// VIEWER   — read-only access across all resources
 enum Role {
   ADMIN
   MANAGER
@@ -31,11 +26,6 @@ enum Role {
   VIEWER
 }
 
-// MovementType describes the direction and intent of a stock change.
-// INBOUND   — product arrives at a warehouse (purchase, return)
-// OUTBOUND  — product leaves a warehouse (sale, consumption)
-// TRANSFER  — product moves between two warehouses
-// ADJUSTMENT — manual correction (count discrepancy, damage write-off)
 enum MovementType {
   INBOUND
   OUTBOUND
@@ -45,24 +35,23 @@ enum MovementType {
 
 // ── Models ───────────────────────────────────────────────────
 
-// User — system account; soft-deleted via isActive
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
-  password  String   // bcrypt hash, cost factor 10 — never return this field in API responses
+  password  String
   firstName String
   lastName  String
   role      Role     @default(OPERATOR)
-  isActive  Boolean  @default(true) // false = soft-deleted; filter with where: { isActive: true }
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  stockMovements StockMovement[] // movements this user created
+  stockMovements StockMovement[]
+  auditLogs      AuditLog[]
 
   @@map("users")
 }
 
-// Category — product classification; name must be unique
 model Category {
   id          String   @id @default(cuid())
   name        String   @unique
@@ -75,7 +64,6 @@ model Category {
   @@map("categories")
 }
 
-// Supplier — vendor that provides products; optional on Product
 model Supplier {
   id          String   @id @default(cuid())
   name        String
@@ -92,12 +80,10 @@ model Supplier {
   @@map("suppliers")
 }
 
-// Warehouse — physical storage location
-// One warehouse can hold many products (via StockItem)
 model Warehouse {
   id          String   @id @default(cuid())
   name        String
-  location    String   // human-readable location, e.g. "Building A, Floor 2"
+  location    String
   description String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -108,16 +94,13 @@ model Warehouse {
   @@map("warehouses")
 }
 
-// Product — a stock-keeping unit (SKU) in the system
-// Each product belongs to one category and optionally one supplier.
-// Actual quantities are stored in StockItem (per warehouse).
 model Product {
   id          String   @id @default(cuid())
-  sku         String   @unique // e.g. "ELEC-001" — must be unique across all products
+  sku         String   @unique
   name        String
   description String?
-  unit        String   @default("pcs") // unit of measure: pcs, kg, l, m, box, etc.
-  minStock    Int      @default(0)     // low-stock threshold; alert when StockItem.quantity < minStock
+  unit        String   @default("pcs")
+  minStock    Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -130,17 +113,18 @@ model Product {
 
   stockItems     StockItem[]
   stockMovements StockMovement[]
+  notifications  Notification[]
 
+  @@index([categoryId])
+  @@index([supplierId])
+  @@index([isActive])
+  @@index([sku])
   @@map("products")
 }
 
-// StockItem — current quantity of a product at a specific warehouse.
-// This is a derived aggregate, kept in sync by StockMovement creation.
-// IMPORTANT: always update StockItem inside the same prisma.$transaction as the StockMovement.
-// Unique constraint ensures one record per (product, warehouse) pair.
 model StockItem {
   id        String   @id @default(cuid())
-  quantity  Int      @default(0) // must never go negative; validate before OUTBOUND movements
+  quantity  Int      @default(0)
   updatedAt DateTime @updatedAt
 
   productId   String
@@ -148,24 +132,17 @@ model StockItem {
   warehouseId String
   warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
 
-  @@unique([productId, warehouseId]) // one stock record per product-warehouse pair
+  @@unique([productId, warehouseId])
   @@map("stock_items")
 }
 
-// StockMovement — immutable audit log of every quantity change.
-// Records are NEVER updated or deleted. Use ADJUSTMENT type to correct errors.
-//
-// Field usage by type:
-//   INBOUND:    quantity > 0, targetWarehouseId required, sourceWarehouseId null
-//   OUTBOUND:   quantity > 0, sourceWarehouseId required, targetWarehouseId null
-//   TRANSFER:   quantity > 0, both sourceWarehouseId and targetWarehouseId required
-//   ADJUSTMENT: quantity can be positive or negative, at least one warehouse required
+// Append-only audit log — never updated or deleted
 model StockMovement {
   id        String       @id @default(cuid())
   type      MovementType
-  quantity  Int          // always positive; direction is inferred from type
-  note      String?      // optional reason / reference (e.g. "PO #1234", "Damaged goods")
-  createdAt DateTime     @default(now()) // immutable — no updatedAt
+  quantity  Int
+  note      String?
+  createdAt DateTime     @default(now())
 
   productId         String
   product           Product @relation(fields: [productId], references: [id])
@@ -173,10 +150,42 @@ model StockMovement {
   createdById       String
   createdBy         User    @relation(fields: [createdById], references: [id])
 
-  // Warehouse references stored as raw IDs (not FK relations) to keep query flexibility.
-  // Validate their existence in the service layer before writing.
-  sourceWarehouseId String? // required for OUTBOUND and TRANSFER
-  targetWarehouseId String? // required for INBOUND and TRANSFER
+  sourceWarehouseId String?
+  targetWarehouseId String?
 
+  @@index([productId])
+  @@index([type])
+  @@index([createdAt])
   @@map("stock_movements")
+}
+
+// Low-stock alert — one unread record per product at a time (STUR-63 dedup)
+model Notification {
+  id        String   @id @default(cuid())
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@index([productId, isRead])
+  @@map("notifications")
+}
+
+// Audit trail for mutating API operations (STUR-15)
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   // e.g. "POST /api/products"
+  entity    String   // e.g. "Product"
+  entityId  String?
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@index([userId])
+  @@map("audit_logs")
 }
