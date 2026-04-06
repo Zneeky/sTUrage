@@ -1,11 +1,13 @@
 import { Router } from 'express';
+import { authenticate, authorize } from '../middleware/auth';
+import { listCategories, getCategory, createCategory, updateCategory, deleteCategory } from '../controllers/categories.controller';
 
 const router = Router();
 
-router.get('/', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.post('/', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.get('/:id', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.put('/:id', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.delete('/:id', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
+router.get('/', authenticate, listCategories);
+router.get('/:id', authenticate, getCategory);
+router.post('/', authenticate, authorize('ADMIN', 'MANAGER'), createCategory);
+router.put('/:id', authenticate, authorize('ADMIN', 'MANAGER'), updateCategory);
+router.delete('/:id', authenticate, authorize('ADMIN'), deleteCategory);
 
 export default router;
