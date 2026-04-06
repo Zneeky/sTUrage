@@ -1,22 +1,13 @@
 import { Router } from 'express';
 import { authLimiter } from '../middleware/rateLimiter';
+import { authenticate } from '../middleware/auth';
+import { login, register, logout, me } from '../controllers/auth.controller';
 
 const router = Router();
 
-router.post('/register', authLimiter, (_req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.post('/login', authLimiter, (_req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.post('/logout', (_req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
-
-router.get('/me', (_req, res) => {
-  res.status(501).json({ message: 'Not implemented yet' });
-});
+router.post('/register', authLimiter, register);
+router.post('/login', authLimiter, login);
+router.post('/logout', authenticate, logout);
+router.get('/me', authenticate, me);
 
 export default router;
