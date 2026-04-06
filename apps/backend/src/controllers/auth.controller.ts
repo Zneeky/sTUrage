@@ -67,7 +67,6 @@ export async function logout(req: AuthRequest, res: Response, next: NextFunction
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (token) {
-      const secret = process.env.JWT_SECRET || 'dev_secret';
       const decoded = jwt.decode(token) as { exp?: number } | null;
       if (decoded?.exp) {
         const remainingMs = decoded.exp * 1000 - Date.now();
