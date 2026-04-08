@@ -2,7 +2,10 @@
 set -e
 
 echo "Waiting for database connection..."
-until npx prisma db execute --stdin <<< "SELECT 1" 2>/dev/null; do
+until npx prisma db execute --stdin <<EOF
+SELECT 1
+EOF
+do
   echo "  database not ready, retrying in 2s..."
   sleep 2
 done
