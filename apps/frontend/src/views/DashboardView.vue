@@ -1,5 +1,7 @@
 <template>
-  <div><h1>Dashboard — Sprint 2</h1></div>
+  <q-page>
+    <div class="page-title">Dashboard</div>
+  </q-page>
 </template>
 
 <script setup lang="ts">

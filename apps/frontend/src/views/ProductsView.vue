@@ -1,5 +1,7 @@
 <template>
-  <div><h1>Products — Sprint 2</h1></div>
+  <q-page>
+    <div class="page-title">Products</div>
+  </q-page>
 </template>
 
 <script setup lang="ts">
