@@ -1,8 +1,116 @@
 <template>
   <q-page>
-    <div class="page-title">StockMovements</div>
+    <div class="row items-center q-mb-md">
+      <div class="page-title q-mb-none">Stock Movements</div>
+      <q-space />
+      <q-btn
+        v-if="canMove"
+        label="New Movement"
+        icon="add"
+        color="primary"
+        unelevated
+        @click="showForm = true"
+      />
+    </div>
+
+    <div class="filter-bar q-mb-md">
+      <q-select
+        v-model="store.filterType"
+        :options="typeOptions"
+        label="Type"
+        outlined dense multiple clearable
+        style="min-width: 200px;"
+        @update:model-value="onFilterChange"
+      />
+      <q-input
+        v-model="store.filterDateFrom"
+        label="From"
+        type="date"
+        outlined dense
+        style="min-width: 160px;"
+        @update:model-value="onFilterChange"
+      />
+      <q-input
+        v-model="store.filterDateTo"
+        label="To"
+        type="date"
+        outlined dense
+        style="min-width: 160px;"
+        @update:model-value="onFilterChange"
+      />
+    </div>
+
+    <q-table
+      :rows="store.items"
+      :columns="columns"
+      row-key="id"
+      :loading="store.loading"
+      flat bordered
+      :rows-per-page-options="[]"
+      hide-bottom
+    >
+      <template #body-cell-type="{ value }">
+        <q-td><MovementTypeBadge :type="value" /></q-td>
+      </template>
+      <template #body-cell-qty="{ row }">
+        <q-td class="text-right" :class="row.type === 'INBOUND' ? 'text-positive' : row.type === 'OUTBOUND' ? 'text-negative' : ''">
+          <span class="text-weight-medium">
+            {{ row.type === 'INBOUND' ? '+' : row.type === 'OUTBOUND' ? '-' : '' }}{{ row.quantity }}
+          </span>
+        </q-td>
+      </template>
+      <template #body-cell-createdAt="{ value }">
+        <q-td>{{ formatDate(value) }}</q-td>
+      </template>
+    </q-table>
+
+    <div class="row justify-center q-mt-md">
+      <q-pagination
+        v-model="store.page"
+        :max="Math.ceil(store.total / store.limit) || 1"
+        :max-pages="7"
+        boundary-numbers
+        color="primary"
+      />
+    </div>
+
+    <MovementFormDialog v-model="showForm" @saved="store.fetchMovements()" />
   </q-page>
 </template>
 
 <script setup lang="ts">
+import { computed, watch, onMounted } from 'vue';
+import { ref } from 'vue';
+import { useMovementsStore } from '@/stores/movements';
+import { useAuthStore } from '@/stores/auth';
+import MovementTypeBadge from '@/components/MovementTypeBadge.vue';
+import MovementFormDialog from '@/components/MovementFormDialog.vue';
+import type { StockMovement } from '@/api/stockMovements.api';
+
+const store = useMovementsStore();
+const authStore = useAuthStore();
+const showForm = ref(false);
+const canMove = computed(() => ['ADMIN', 'MANAGER', 'OPERATOR'].includes(authStore.user?.role ?? ''));
+
+const typeOptions = ['INBOUND', 'OUTBOUND', 'TRANSFER', 'ADJUSTMENT'];
+
+const columns = [
+  { name: 'createdAt', label: 'Date',    field: 'createdAt', align: 'left' as const, sortable: true },
+  { name: 'product',   label: 'Product', field: (r: StockMovement) => r.product.name, align: 'left' as const },
+  { name: 'type',      label: 'Type',    field: 'type',      align: 'left' as const },
+  { name: 'qty',       label: 'Qty',     field: 'quantity',  align: 'right' as const },
+  { name: 'by',        label: 'By',      field: (r: StockMovement) => r.createdBy.email, align: 'left' as const },
+];
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function onFilterChange() {
+  store.resetPage();
+  store.fetchMovements();
+}
+
+watch(() => store.page, () => store.fetchMovements());
+onMounted(() => store.fetchMovements());
 </script>
