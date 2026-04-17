@@ -22,6 +22,18 @@
         style="min-width: 200px;"
         @update:model-value="onFilterChange"
       />
+      <q-select
+        v-model="store.filterProductId"
+        :options="productOptions"
+        option-value="id" option-label="name"
+        emit-value map-options
+        use-input clearable
+        label="Product"
+        outlined dense
+        style="min-width: 200px;"
+        @filter="filterProducts"
+        @update:model-value="onFilterChange"
+      />
       <q-input
         v-model="store.filterDateFrom"
         label="From"
@@ -79,20 +91,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted } from 'vue';
-import { ref } from 'vue';
+import { computed, watch, onMounted, ref } from 'vue';
 import { useMovementsStore } from '@/stores/movements';
 import { useAuthStore } from '@/stores/auth';
+import { listProducts } from '@/api/products.api';
 import MovementTypeBadge from '@/components/MovementTypeBadge.vue';
 import MovementFormDialog from '@/components/MovementFormDialog.vue';
 import type { StockMovement } from '@/api/stockMovements.api';
+import type { Product } from '@/api/products.api';
 
 const store = useMovementsStore();
 const authStore = useAuthStore();
 const showForm = ref(false);
+const productOptions = ref<Product[]>([]);
 const canMove = computed(() => ['ADMIN', 'MANAGER', 'OPERATOR'].includes(authStore.user?.role ?? ''));
 
 const typeOptions = ['INBOUND', 'OUTBOUND', 'TRANSFER', 'ADJUSTMENT'];
+
+async function filterProducts(val: string, update: (fn: () => void) => void) {
+  const res = await listProducts({ search: val, limit: 20 });
+  update(() => { productOptions.value = res.data; });
+}
 
 const columns = [
   { name: 'createdAt', label: 'Date',    field: 'createdAt', align: 'left' as const, sortable: true },
