@@ -123,7 +123,7 @@ async function handleLogout() {
 
 .nav-item :deep(.q-icon),
 .nav-item :deep(.q-item__section) {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.75) !important;
 }
 
 .nav-item--active {
