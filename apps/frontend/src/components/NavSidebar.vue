@@ -121,7 +121,8 @@ async function handleLogout() {
   min-height: 44px;
 }
 
-.nav-item :deep(.q-icon) {
+.nav-item :deep(.q-icon),
+.nav-item :deep(.q-item__section) {
   color: rgba(255, 255, 255, 0.75);
 }
 
@@ -130,7 +131,8 @@ async function handleLogout() {
   color: white !important;
 }
 
-.nav-item--active :deep(.q-icon) {
+.nav-item--active :deep(.q-icon),
+.nav-item--active :deep(.q-item__section) {
   color: white !important;
 }
 
