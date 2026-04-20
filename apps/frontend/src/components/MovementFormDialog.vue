@@ -96,7 +96,10 @@ const emit = defineEmits<{
 const $q = useQuasar();
 const open = ref(props.modelValue);
 watch(() => props.modelValue, v => { open.value = v; if (v) resetForm(); });
-watch(open, v => emit('update:modelValue', v));
+watch(open, v => {
+  emit('update:modelValue', v);
+  if (!v) errorMsg.value = '';
+});
 
 const saving = ref(false);
 const errorMsg = ref('');

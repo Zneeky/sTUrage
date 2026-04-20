@@ -93,8 +93,9 @@ async function handleSubmit() {
     emit('saved');
     open.value = false;
     $q.notify({ type: 'positive', message: props.user ? 'User updated' : 'User created' });
-  } catch {
-    $q.notify({ type: 'negative', message: 'Failed to save user' });
+  } catch (err: unknown) {
+    const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Failed to save user';
+    $q.notify({ type: 'negative', message: msg });
   } finally {
     saving.value = false;
   }

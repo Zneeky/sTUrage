@@ -134,8 +134,9 @@ async function handleSubmit() {
     emit('saved');
     open.value = false;
     $q.notify({ type: 'positive', message: props.product ? 'Product updated' : 'Product created' });
-  } catch {
-    $q.notify({ type: 'negative', message: 'Failed to save product' });
+  } catch (err: unknown) {
+    const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Failed to save product';
+    $q.notify({ type: 'negative', message: msg });
   } finally {
     saving.value = false;
   }
