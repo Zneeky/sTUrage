@@ -154,12 +154,8 @@ async function handleSubmit() {
     open.value = false;
     $q.notify({ type: 'positive', message: 'Movement recorded' });
   } catch (err: unknown) {
-    const data = (err as { response?: { data?: { error?: string; current?: number; requested?: number } } }).response?.data;
-    if (data?.current !== undefined) {
-      errorMsg.value = `${data.error} — available: ${data.current}, requested: ${data.requested}`;
-    } else {
-      errorMsg.value = data?.error ?? 'Failed to record movement';
-    }
+    const data = (err as { response?: { data?: { error?: string } } }).response?.data;
+    errorMsg.value = data?.error ?? 'Failed to record movement';
   } finally {
     saving.value = false;
   }

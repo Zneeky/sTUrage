@@ -18,8 +18,13 @@ export async function createTransaction(req: AuthRequest, res: Response, next: N
   try {
     const { productId, warehouseId, type, quantity, targetWarehouseId, note } = createSchema.parse(req.body);
 
-    if (type === 'TRANSFER' && !targetWarehouseId) {
-      return res.status(422).json({ status: 422, error: 'targetWarehouseId required for TRANSFER' });
+    if (type === 'TRANSFER') {
+      if (!targetWarehouseId) {
+        return res.status(422).json({ status: 422, error: 'Target warehouse is required for transfers' });
+      }
+      if (targetWarehouseId === warehouseId) {
+        return res.status(422).json({ status: 422, error: 'Source and target warehouse must be different' });
+      }
     }
 
     // For OUTBOUND / TRANSFER check sufficient stock
@@ -31,7 +36,7 @@ export async function createTransaction(req: AuthRequest, res: Response, next: N
       if (current < quantity) {
         return res.status(422).json({
           status: 422,
-          error: 'Insufficient stock',
+          error: `Not enough stock — only ${current} available, ${quantity} requested`,
           current,
           requested: quantity,
         });
