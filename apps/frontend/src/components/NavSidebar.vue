@@ -5,14 +5,14 @@
     :width="240"
     :breakpoint="600"
     bordered
-    class="sidebar"
+    content-class="sidebar"
   >
     <div class="sidebar-header">
       <q-icon name="warehouse" size="28px" color="white" />
       <span class="sidebar-title">STURage</span>
     </div>
 
-    <q-list padding class="nav-list" dark>
+    <q-list padding class="nav-list">
       <template v-for="item in navItems" :key="item.to">
         <q-item
           v-if="!item.adminOnly || isAdmin"
@@ -62,7 +62,9 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const props = defineProps<{ modelValue: boolean }>();
-const emit = defineEmits<{ (e: 'update:modelValue', val: boolean): void }>();
+const emit = defineEmits<{
+  (e: 'update:modelValue', val: boolean): void;
+}>();
 
 const open = computed({
   get: () => props.modelValue,
@@ -89,11 +91,6 @@ async function handleLogout() {
 </script>
 
 <style scoped>
-.sidebar {
-  background: #1A2035;
-  color: white;
-}
-
 .sidebar-header {
   display: flex;
   align-items: center;
@@ -115,25 +112,13 @@ async function handleLogout() {
 }
 
 .nav-item {
-  color: rgba(255, 255, 255, 0.75);
   border-radius: 6px;
   margin: 2px 8px;
   min-height: 44px;
 }
 
-.nav-item :deep(.q-icon),
-.nav-item :deep(.q-item__section) {
-  color: rgba(255, 255, 255, 0.75) !important;
-}
-
 .nav-item--active {
   background: #1565C0 !important;
-  color: white !important;
-}
-
-.nav-item--active :deep(.q-icon),
-.nav-item--active :deep(.q-item__section) {
-  color: white !important;
 }
 
 .sidebar-footer {

@@ -27,3 +27,29 @@ body {
   margin-bottom: 16px;
   align-items: flex-end;
 }
+
+/* Sidebar — applied via content-class so it targets Quasar's inner panel */
+.sidebar {
+  background: #1A2035 !important;
+  color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .nav-item {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sidebar .nav-item .q-icon,
+.sidebar .nav-item .q-item__section {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sidebar .nav-item--active {
+  background: #1565C0 !important;
+}
+
+.sidebar .nav-item--active .q-icon,
+.sidebar .nav-item--active .q-item__section {
+  color: white !important;
+}
