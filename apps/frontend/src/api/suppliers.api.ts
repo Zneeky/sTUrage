@@ -24,3 +24,7 @@ export async function updateSupplier(id: string, data: Partial<Omit<Supplier, 'i
   const res = await client.put(`/suppliers/${id}`, data);
   return res.data.data;
 }
+
+export async function deleteSupplier(id: string): Promise<void> {
+  await client.delete(`/suppliers/${id}`);
+}
