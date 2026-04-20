@@ -18,6 +18,7 @@
           v-for="n in store.items"
           :key="n.id"
           :notification="n"
+          dismissible
         />
       </q-list>
       <div v-else class="text-center text-grey-5 q-pa-xl">
@@ -36,8 +37,7 @@ import NotificationItem from '@/components/NotificationItem.vue';
 const store = useNotificationsStore();
 
 async function markAll() {
-  const unread = store.items.filter(n => !n.isRead);
-  await Promise.all(unread.map(n => store.markRead(n.id)));
+  await store.markAllRead();
 }
 
 onMounted(() => store.fetch());

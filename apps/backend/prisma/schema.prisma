@@ -159,17 +159,24 @@ model StockMovement {
   @@map("stock_movements")
 }
 
-// Low-stock alert — one unread record per product at a time (STUR-63 dedup)
+enum NotificationType {
+  LOW_STOCK
+  OUT_OF_STOCK
+}
+
+// Stock alert — dedup by (productId, type) while unread (STUR-63 dedup)
 model Notification {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
+  type      NotificationType @default(LOW_STOCK)
   message   String
-  isRead    Boolean  @default(false)
-  createdAt DateTime @default(now())
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
   @@index([productId, isRead])
+  @@index([type, isRead])
   @@map("notifications")
 }
 
