@@ -12,7 +12,7 @@
       <span class="sidebar-title">STURage</span>
     </div>
 
-    <q-list padding class="nav-list">
+    <q-list padding class="nav-list" dark>
       <template v-for="item in navItems" :key="item.to">
         <q-item
           v-if="!item.adminOnly || isAdmin"
