@@ -15,15 +15,15 @@ export const apiLimiter = rateLimit({
 });
 
 // Stricter limiter for authentication endpoints — brute-force protection.
-// 10 attempts per 15 minutes per IP.
+// Default: 30 failed attempts per 10 minutes per IP.
 export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: parseInt(process.env.RATE_LIMIT_AUTH_MAX || '10', 10),
+  windowMs: parseInt(process.env.RATE_LIMIT_AUTH_WINDOW_MS || '600000', 10),
+  max: parseInt(process.env.RATE_LIMIT_AUTH_MAX || '30', 10),
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     status: 429,
-    error: 'Too many authentication attempts, please try again in 15 minutes.',
+    error: 'Too many login attempts — try again in a few minutes.',
   },
   skipSuccessfulRequests: true, // Only count failed attempts toward the limit
 });
