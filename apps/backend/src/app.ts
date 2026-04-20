@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { apiLimiter } from './middleware/rateLimiter';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import logger from './utils/logger';
 import routes from './routes';
@@ -34,7 +33,6 @@ app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev', {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api', apiLimiter);
 app.use('/api', routes);
 
 app.use(notFound);

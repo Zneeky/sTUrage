@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { Notify } from 'quasar';
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ? `${import.meta.env.VITE_API_BASE_URL}/api` : '/api',
@@ -24,8 +23,6 @@ client.interceptors.response.use(
       const { default: router } = await import('@/router');
       useAuthStore().logout();
       router.push('/login');
-    } else if (error.response?.status === 429) {
-      Notify.create({ type: 'warning', message: 'Too many requests — try again shortly' });
     }
     return Promise.reject(error);
   }
