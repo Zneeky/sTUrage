@@ -21,10 +21,26 @@ const updateSchema = z.object({
   role: z.enum(['ADMIN', 'MANAGER', 'OPERATOR', 'VIEWER']).optional(),
 });
 
-export async function listUsers(_req: AuthRequest, res: Response, next: NextFunction) {
+export async function listUsers(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const users = await prisma.user.findMany({ select: userSelect, orderBy: { createdAt: 'asc' } });
-    res.json({ data: users });
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const search = req.query.search as string | undefined;
+
+    const where: Record<string, unknown> = {};
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      prisma.user.findMany({ where, select: userSelect, skip: (page - 1) * limit, take: limit, orderBy: { createdAt: 'asc' } }),
+      prisma.user.count({ where }),
+    ]);
+    res.json({ data, total, page, limit, totalPages: Math.ceil(total / limit) });
   } catch (err) { next(err); }
 }
 

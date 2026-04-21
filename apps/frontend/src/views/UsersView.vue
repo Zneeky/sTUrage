@@ -48,6 +48,15 @@
             </q-td>
           </template>
         </q-table>
+        <div class="row justify-center q-mt-md">
+          <q-pagination
+            v-model="store.usersPage"
+            :max="Math.ceil(store.usersTotal / store.usersLimit) || 1"
+            :max-pages="7"
+            boundary-numbers
+            color="primary"
+          />
+        </div>
       </q-tab-panel>
 
       <!-- Audit log tab -->
@@ -68,7 +77,7 @@
         <div class="row justify-center q-mt-md">
           <q-pagination
             v-model="store.auditPage"
-            :max="Math.ceil(store.auditTotal / 20) || 1"
+            :max="Math.ceil(store.auditTotal / store.auditLimit) || 1"
             :max-pages="7"
             boundary-numbers
             color="primary"
@@ -141,6 +150,7 @@ function confirmDeactivate(user: User) {
   });
 }
 
+watch(() => store.usersPage, () => store.fetchUsers());
 watch(() => store.auditPage, () => store.fetchAuditLog());
 watch(activeTab, (tab) => { if (tab === 'auditlog' && !store.auditLog.length) store.fetchAuditLog(); });
 onMounted(() => store.fetchUsers());

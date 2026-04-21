@@ -5,17 +5,28 @@ import type { User, AuditEntry, CreateUserDto, UpdateUserDto } from '@/api/users
 
 export const useUsersStore = defineStore('users', () => {
   const users = ref<User[]>([]);
+  const usersPage = ref(1);
+  const usersLimit = ref(5);
+  const usersTotal = ref(0);
+
   const auditLog = ref<AuditEntry[]>([]);
   const auditPage = ref(1);
+  const auditLimit = ref(5);
   const auditTotal = ref(0);
+
   const loading = ref(false);
   const auditLoading = ref(false);
 
   async function fetchUsers() {
     loading.value = true;
-    try { users.value = await listUsers(); }
-    finally { loading.value = false; }
+    try {
+      const res = await listUsers({ page: usersPage.value, limit: usersLimit.value });
+      users.value = res.data;
+      usersTotal.value = res.total;
+    } finally { loading.value = false; }
   }
+
+  function resetUsersPage() { usersPage.value = 1; }
 
   async function addUser(data: CreateUserDto) {
     await createUser(data);
@@ -35,12 +46,16 @@ export const useUsersStore = defineStore('users', () => {
   async function fetchAuditLog() {
     auditLoading.value = true;
     try {
-      const res = await listAuditLog({ page: auditPage.value, limit: 20 });
+      const res = await listAuditLog({ page: auditPage.value, limit: auditLimit.value });
       auditLog.value = res.data;
       auditTotal.value = res.total;
-    } finally {
-      auditLoading.value = false; }
+    } finally { auditLoading.value = false; }
   }
 
-  return { users, auditLog, auditPage, auditTotal, loading, auditLoading, fetchUsers, addUser, editUser, deactivate, fetchAuditLog };
+  return {
+    users, usersPage, usersLimit, usersTotal,
+    auditLog, auditPage, auditLimit, auditTotal,
+    loading, auditLoading,
+    fetchUsers, resetUsersPage, addUser, editUser, deactivate, fetchAuditLog,
+  };
 });

@@ -7,7 +7,7 @@ export const useProductsStore = defineStore('products', () => {
   const items = ref<Product[]>([]);
   const total = ref(0);
   const page = ref(1);
-  const limit = ref(20);
+  const limit = ref(5);
   const search = ref('');
   const categoryId = ref<string | null>(null);
   const supplierId = ref<string | null>(null);

@@ -25,14 +25,24 @@
       </template>
     </q-table>
 
+    <div class="row justify-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :max="Math.ceil(total / limit) || 1"
+        :max-pages="7"
+        boundary-numbers
+        color="primary"
+      />
+    </div>
+
     <CategoryFormDialog v-model="showForm" :category="selected" @saved="load" />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-import { listCategories, deleteCategory } from '@/api/categories.api';
+import { listCategoriesPaginated, deleteCategory } from '@/api/categories.api';
 import { useAuthStore } from '@/stores/auth';
 import CategoryFormDialog from '@/components/CategoryFormDialog.vue';
 import type { Category } from '@/api/categories.api';
@@ -42,6 +52,9 @@ const authStore = useAuthStore();
 const canEdit = computed(() => ['ADMIN', 'MANAGER'].includes(authStore.user?.role ?? ''));
 
 const categories = ref<Category[]>([]);
+const page = ref(1);
+const limit = ref(5);
+const total = ref(0);
 const loading = ref(false);
 const showForm = ref(false);
 const selected = ref<Category | null>(null);
@@ -54,9 +67,14 @@ const columns = [
 
 async function load() {
   loading.value = true;
-  try { categories.value = await listCategories(); }
-  finally { loading.value = false; }
+  try {
+    const res = await listCategoriesPaginated({ page: page.value, limit: limit.value });
+    categories.value = res.data;
+    total.value = res.total;
+  } finally { loading.value = false; }
 }
+
+watch(page, load);
 
 function openForm(cat: Category | null) {
   selected.value = cat;
@@ -73,6 +91,7 @@ function confirmDelete(cat: Category) {
     try {
       await deleteCategory(cat.id);
       $q.notify({ type: 'positive', message: 'Category deleted' });
+      page.value = 1;
       await load();
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } }).response?.status;

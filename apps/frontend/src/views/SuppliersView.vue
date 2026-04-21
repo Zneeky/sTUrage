@@ -25,14 +25,24 @@
       </template>
     </q-table>
 
+    <div class="row justify-center q-mt-md">
+      <q-pagination
+        v-model="page"
+        :max="Math.ceil(total / limit) || 1"
+        :max-pages="7"
+        boundary-numbers
+        color="primary"
+      />
+    </div>
+
     <SupplierFormDialog v-model="showForm" :supplier="selected" @saved="load" />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-import { listSuppliers, deleteSupplier } from '@/api/suppliers.api';
+import { listSuppliersPaginated, deleteSupplier } from '@/api/suppliers.api';
 import { useAuthStore } from '@/stores/auth';
 import SupplierFormDialog from '@/components/SupplierFormDialog.vue';
 import type { Supplier } from '@/api/suppliers.api';
@@ -43,6 +53,9 @@ const canEdit   = computed(() => ['ADMIN', 'MANAGER'].includes(authStore.user?.r
 const canDelete = computed(() => authStore.user?.role === 'ADMIN');
 
 const suppliers = ref<Supplier[]>([]);
+const page = ref(1);
+const limit = ref(5);
+const total = ref(0);
 const loading = ref(false);
 const showForm = ref(false);
 const selected = ref<Supplier | null>(null);
@@ -58,9 +71,14 @@ const columns = [
 
 async function load() {
   loading.value = true;
-  try { suppliers.value = await listSuppliers(); }
-  finally { loading.value = false; }
+  try {
+    const res = await listSuppliersPaginated({ page: page.value, limit: limit.value });
+    suppliers.value = res.data;
+    total.value = res.total;
+  } finally { loading.value = false; }
 }
+
+watch(page, load);
 
 function openForm(s: Supplier | null) {
   selected.value = s;
@@ -77,6 +95,7 @@ function confirmDelete(s: Supplier) {
     try {
       await deleteSupplier(s.id);
       $q.notify({ type: 'positive', message: 'Supplier deleted' });
+      page.value = 1;
       await load();
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } }).response?.status;

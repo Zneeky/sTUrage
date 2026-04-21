@@ -8,9 +8,22 @@ export interface Category {
   updatedAt?: string;
 }
 
+export interface CategoriesResponse {
+  data: Category[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export async function listCategories(): Promise<Category[]> {
   const res = await client.get('/categories');
   return res.data.data;
+}
+
+export async function listCategoriesPaginated(params: { page: number; limit: number }): Promise<CategoriesResponse> {
+  const res = await client.get('/categories', { params });
+  return res.data;
 }
 
 export async function getCategory(id: string): Promise<Category> {

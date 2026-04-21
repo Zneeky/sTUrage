@@ -7,7 +7,7 @@ export const useMovementsStore = defineStore('movements', () => {
   const items = ref<StockMovement[]>([]);
   const total = ref(0);
   const page = ref(1);
-  const limit = ref(20);
+  const limit = ref(5);
   const loading = ref(false);
   const filterType = ref<string[]>([]);
   const filterProductId = ref<string | null>(null);

@@ -35,9 +35,17 @@ export interface UpdateUserDto {
   role?: User['role'];
 }
 
-export async function listUsers(): Promise<User[]> {
-  const res = await client.get('/users');
-  return res.data.data;
+export interface UsersResponse {
+  data: User[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export async function listUsers(params?: { page?: number; limit?: number; search?: string }): Promise<UsersResponse> {
+  const res = await client.get('/users', { params });
+  return res.data;
 }
 
 export async function createUser(data: CreateUserDto): Promise<User> {

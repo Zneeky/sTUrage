@@ -11,10 +11,19 @@ const schema = z.object({
   address: z.string().optional(),
 });
 
-export async function listSuppliers(_req: AuthRequest, res: Response, next: NextFunction) {
+export async function listSuppliers(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const suppliers = await prisma.supplier.findMany({ where: { isActive: true }, orderBy: { name: 'asc' } });
-    res.json({ data: suppliers });
+    if (req.query.page || req.query.limit) {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+      const [data, total] = await Promise.all([
+        prisma.supplier.findMany({ where: { isActive: true }, skip: (page - 1) * limit, take: limit, orderBy: { name: 'asc' } }),
+        prisma.supplier.count({ where: { isActive: true } }),
+      ]);
+      return res.json({ data, total, page, limit, totalPages: Math.ceil(total / limit) });
+    }
+    const data = await prisma.supplier.findMany({ where: { isActive: true }, orderBy: { name: 'asc' } });
+    res.json({ data });
   } catch (err) { next(err); }
 }
 

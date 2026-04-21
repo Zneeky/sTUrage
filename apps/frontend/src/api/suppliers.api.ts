@@ -10,9 +10,22 @@ export interface Supplier {
   isActive: boolean;
 }
 
+export interface SuppliersResponse {
+  data: Supplier[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export async function listSuppliers(): Promise<Supplier[]> {
   const res = await client.get('/suppliers');
   return res.data.data;
+}
+
+export async function listSuppliersPaginated(params: { page: number; limit: number }): Promise<SuppliersResponse> {
+  const res = await client.get('/suppliers', { params });
+  return res.data;
 }
 
 export async function createSupplier(data: Omit<Supplier, 'id' | 'isActive'>): Promise<Supplier> {

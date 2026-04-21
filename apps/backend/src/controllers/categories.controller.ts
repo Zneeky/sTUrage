@@ -8,10 +8,19 @@ const schema = z.object({
   description: z.string().optional(),
 });
 
-export async function listCategories(_req: AuthRequest, res: Response, next: NextFunction) {
+export async function listCategories(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } });
-    res.json({ data: categories });
+    if (req.query.page || req.query.limit) {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+      const [data, total] = await Promise.all([
+        prisma.category.findMany({ skip: (page - 1) * limit, take: limit, orderBy: { name: 'asc' } }),
+        prisma.category.count(),
+      ]);
+      return res.json({ data, total, page, limit, totalPages: Math.ceil(total / limit) });
+    }
+    const data = await prisma.category.findMany({ orderBy: { name: 'asc' } });
+    res.json({ data });
   } catch (err) { next(err); }
 }
 
