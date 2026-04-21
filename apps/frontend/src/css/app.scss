@@ -1,55 +1,349 @@
+// Global application styles — STURage
+// Design tokens live in theme.css (imported in main.ts)
+// Quasar brand variables live in variables.scss
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
+
 :root {
-  --stu-sidebar-width: 240px;
-  --stu-header-height: 56px;
-  --stu-bg: #F4F6FA;
-  --stu-surface: #FFFFFF;
+  --stu-sidebar-width:  240px;
+  --stu-header-height:  56px;
+  --stu-bg:             #F4F6FA;
+  --stu-surface:        #FFFFFF;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
+  font-family: var(--stu-font-family, "Inter", "Segoe UI", "Helvetica Neue", sans-serif);
+  font-size: var(--stu-text-base, 1rem);
+  line-height: var(--stu-leading-normal, 1.5);
+  color: var(--stu-text-primary, #1A1A2E);
   background: var(--stu-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+// ─── Page layout ──────────────────────────────────────────────────────────────
+
 .q-page {
-  padding: 24px;
+  padding: var(--stu-space-6, 24px);
 }
 
 .page-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #212121;
+  font-size: var(--stu-text-xl, 1.25rem);
+  font-weight: var(--stu-font-semibold, 600);
+  line-height: var(--stu-leading-tight, 1.25);
+  letter-spacing: var(--stu-tracking-tight, -0.015em);
+  color: var(--stu-text-primary, #1A1A2E);
+  margin: 0 0 var(--stu-space-5, 20px);
 }
+
+.page-subtitle {
+  font-size: var(--stu-text-sm, 0.875rem);
+  color: var(--stu-text-secondary, #4A5568);
+  margin-top: calc(-1 * var(--stu-space-4, 16px));
+  margin-bottom: var(--stu-space-5, 20px);
+}
+
+// ─── Filter bar ───────────────────────────────────────────────────────────────
 
 .filter-bar {
   display: flex;
-  gap: 12px;
+  gap: var(--stu-space-3, 12px);
   flex-wrap: wrap;
-  margin-bottom: 16px;
   align-items: flex-end;
+  margin-bottom: var(--stu-space-4, 16px);
 }
 
-/* Sidebar — applied via content-class so it targets Quasar's inner panel */
+// ─── Cards & containers ───────────────────────────────────────────────────────
+
+.stu-card {
+  background: var(--stu-bg-surface, #FFFFFF);
+  border-radius: var(--stu-radius-lg, 14px);
+  box-shadow: var(--stu-shadow-2);
+  padding: var(--stu-space-6, 24px);
+  transition: box-shadow var(--stu-transition-normal);
+
+  &:hover {
+    box-shadow: var(--stu-shadow-4);
+  }
+}
+
+.stu-card--flat {
+  box-shadow: none;
+  border: 1px solid var(--stu-border-default, #E3E8F0);
+}
+
+.stu-card--elevated {
+  box-shadow: var(--stu-shadow-6);
+}
+
+// ─── Quasar card overrides ─────────────────────────────────────────────────────
+
+.q-card {
+  border-radius: var(--stu-radius-lg, 14px) !important;
+  box-shadow: var(--stu-shadow-2) !important;
+  transition: box-shadow var(--stu-transition-normal);
+
+  &:hover {
+    box-shadow: var(--stu-shadow-4) !important;
+  }
+}
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+
+.q-btn {
+  border-radius: var(--stu-radius-full, 9999px) !important;
+  font-weight: var(--stu-font-medium, 500) !important;
+  letter-spacing: var(--stu-tracking-wide, 0.015em) !important;
+  transition:
+    background-color var(--stu-transition-fast),
+    box-shadow var(--stu-transition-fast),
+    transform var(--stu-transition-fast) !important;
+
+  &:not(.q-btn--flat):not(.q-btn--outline) {
+    box-shadow: var(--stu-shadow-1);
+
+    &:hover {
+      box-shadow: var(--stu-shadow-3);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      box-shadow: var(--stu-shadow-1);
+      transform: translateY(0);
+    }
+  }
+}
+
+// ─── Inputs / form fields ──────────────────────────────────────────────────────
+
+.q-field {
+  .q-field__control {
+    border-radius: var(--stu-radius-md, 10px) !important;
+  }
+
+  &.q-field--outlined .q-field__control::before {
+    border-color: var(--stu-border-default, #E3E8F0) !important;
+    transition: border-color var(--stu-transition-fast);
+  }
+
+  &.q-field--focused .q-field__control::before {
+    border-color: var(--stu-color-primary, #1565C0) !important;
+    border-width: 2px !important;
+  }
+
+  .q-field__label {
+    font-size: var(--stu-text-sm, 0.875rem);
+    color: var(--stu-text-secondary, #4A5568);
+  }
+}
+
+.q-select .q-field__control {
+  border-radius: var(--stu-radius-md, 10px) !important;
+}
+
+// ─── Table ─────────────────────────────────────────────────────────────────────
+
+.q-table {
+  border-radius: var(--stu-radius-lg, 14px) !important;
+  overflow: hidden;
+  box-shadow: var(--stu-shadow-2);
+
+  thead tr th {
+    font-size: var(--stu-text-xs, 0.75rem);
+    font-weight: var(--stu-font-semibold, 600);
+    letter-spacing: var(--stu-tracking-wider, 0.05em);
+    text-transform: uppercase;
+    color: var(--stu-text-muted, #718096);
+    background: var(--stu-bg-subtle, #F5F7FA);
+    border-bottom: 1px solid var(--stu-border-default, #E3E8F0);
+  }
+
+  tbody tr {
+    transition: background-color var(--stu-transition-fast);
+
+    &:hover td {
+      background: var(--stu-bg-muted, #EEF1F6);
+    }
+
+    td {
+      font-size: var(--stu-text-sm, 0.875rem);
+      color: var(--stu-text-primary, #1A1A2E);
+      border-bottom: 1px solid var(--stu-border-default, #E3E8F0);
+    }
+  }
+}
+
+// ─── Chips / badges ────────────────────────────────────────────────────────────
+
+.q-chip {
+  border-radius: var(--stu-radius-full, 9999px) !important;
+  font-size: var(--stu-text-xs, 0.75rem) !important;
+  font-weight: var(--stu-font-medium, 500) !important;
+}
+
+.stu-badge--accent {
+  background: var(--stu-color-accent-light, #FFF9C4);
+  color: var(--stu-color-accent-dark, #F57F17);
+}
+
+.stu-badge--pink {
+  background: var(--stu-color-pink-light);
+  color: var(--stu-color-pink-dark);
+}
+
+// ─── Toolbar / header ─────────────────────────────────────────────────────────
+
+.q-toolbar {
+  border-bottom: 1px solid var(--stu-border-default, #E3E8F0);
+  box-shadow: var(--stu-shadow-1);
+}
+
+// ─── Sidebar / drawer ─────────────────────────────────────────────────────────
+
 .sidebar {
-  background: #1A2035 !important;
-  color: white;
+  background: var(--stu-nav-bg, #1A2035) !important;
+  color: var(--stu-nav-text, rgba(255, 255, 255, 0.75));
   display: flex;
   flex-direction: column;
+  box-shadow: var(--stu-shadow-8);
 }
 
 .sidebar .nav-item {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--stu-nav-text, rgba(255, 255, 255, 0.75));
+  border-radius: var(--stu-radius-md, 10px);
+  margin: 2px var(--stu-space-2, 8px);
+  transition:
+    background-color var(--stu-transition-fast),
+    color var(--stu-transition-fast);
+
+  &:hover:not(.nav-item--active) {
+    background: var(--stu-nav-hover-bg, rgba(255, 255, 255, 0.08));
+    color: #FFFFFF;
+  }
 }
 
 .sidebar .nav-item .q-icon,
 .sidebar .nav-item .q-item__section {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--stu-nav-text, rgba(255, 255, 255, 0.75));
 }
 
 .sidebar .nav-item--active {
-  background: #1565C0 !important;
+  background: var(--stu-nav-active-bg, #1565C0) !important;
+  box-shadow: var(--stu-shadow-2);
 }
 
 .sidebar .nav-item--active .q-icon,
 .sidebar .nav-item--active .q-item__section {
-  color: white !important;
+  color: var(--stu-nav-active-text, #FFFFFF) !important;
+}
+
+// ─── Dialog ───────────────────────────────────────────────────────────────────
+
+.q-dialog__inner > div {
+  border-radius: var(--stu-radius-xl, 20px) !important;
+  box-shadow: var(--stu-shadow-16) !important;
+}
+
+// ─── Notification / toast ─────────────────────────────────────────────────────
+
+.q-notification {
+  border-radius: var(--stu-radius-lg, 14px) !important;
+  box-shadow: var(--stu-shadow-8) !important;
+  font-size: var(--stu-text-sm, 0.875rem) !important;
+}
+
+// ─── Menu / dropdown ──────────────────────────────────────────────────────────
+
+.q-menu {
+  border-radius: var(--stu-radius-lg, 14px) !important;
+  box-shadow: var(--stu-shadow-8) !important;
+  border: 1px solid var(--stu-border-default, #E3E8F0) !important;
+  overflow: hidden;
+}
+
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+
+.q-tooltip {
+  border-radius: var(--stu-radius-sm, 6px) !important;
+  font-size: var(--stu-text-xs, 0.75rem) !important;
+  background: var(--stu-text-primary, #1A1A2E) !important;
+}
+
+// ─── Stat / KPI cards ─────────────────────────────────────────────────────────
+
+.stu-stat-card {
+  background: var(--stu-bg-surface, #FFFFFF);
+  border-radius: var(--stu-radius-lg, 14px);
+  box-shadow: var(--stu-shadow-2);
+  padding: var(--stu-space-5, 20px) var(--stu-space-6, 24px);
+  border-left: 4px solid var(--stu-color-primary, #1565C0);
+  transition: box-shadow var(--stu-transition-normal), transform var(--stu-transition-normal);
+
+  &:hover {
+    box-shadow: var(--stu-shadow-6);
+    transform: translateY(-2px);
+  }
+
+  &__value {
+    font-size: var(--stu-text-3xl, 1.875rem);
+    font-weight: var(--stu-font-bold, 700);
+    color: var(--stu-text-primary, #1A1A2E);
+    letter-spacing: var(--stu-tracking-tight, -0.015em);
+  }
+
+  &__label {
+    font-size: var(--stu-text-xs, 0.75rem);
+    font-weight: var(--stu-font-medium, 500);
+    letter-spacing: var(--stu-tracking-wider, 0.05em);
+    text-transform: uppercase;
+    color: var(--stu-text-muted, #718096);
+    margin-top: var(--stu-space-1, 4px);
+  }
+
+  &--accent {
+    border-left-color: var(--stu-color-accent, #F9A825);
+  }
+
+  &--pink {
+    border-left-color: var(--stu-color-pink, #E91E8C);
+  }
+
+  &--success {
+    border-left-color: var(--stu-color-success, #2E7D32);
+  }
+}
+
+// ─── Utility: focus ring ──────────────────────────────────────────────────────
+
+:focus-visible {
+  outline: 2px solid var(--stu-color-primary, #1565C0);
+  outline-offset: 2px;
+  border-radius: var(--stu-radius-sm, 6px);
+}
+
+// ─── Scrollbar ────────────────────────────────────────────────────────────────
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--stu-bg-muted, #EEF1F6);
+  border-radius: var(--stu-radius-full, 9999px);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--stu-border-strong, #C5CEDC);
+  border-radius: var(--stu-radius-full, 9999px);
+
+  &:hover {
+    background: var(--stu-text-muted, #718096);
+  }
 }

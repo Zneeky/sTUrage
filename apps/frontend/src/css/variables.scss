@@ -1,8 +1,14 @@
-$primary:   #1565C0;
-$secondary: #0288D1;
-$accent:    #00ACC1;
-$dark:      #1A2035;
-$positive:  #2E7D32;
-$negative:  #C62828;
-$warning:   #EF6C00;
-$info:      #0277BD;
+// Quasar SCSS brand variables
+// Palette: Blue primary · Yellow secondary · Pink accent
+// Matches tokens defined in theme.css
+
+$primary:   #1565C0;  // professional blue
+$secondary: #F9A825;  // amber/yellow — highlights & warnings
+$accent:    #E91E8C;  // pink — badges, special states
+
+$dark:      #1A2035;  // sidebar / deep navy
+
+$positive:  #2E7D32;  // success green
+$negative:  #C62828;  // error red
+$warning:   #F57F17;  // warning amber
+$info:      #0288D1;  // informational blue

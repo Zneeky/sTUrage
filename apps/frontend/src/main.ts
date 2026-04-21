@@ -3,6 +3,7 @@ import { createPinia } from 'pinia';
 import { Quasar, Notify, Dialog, Loading } from 'quasar';
 import '@quasar/extras/material-icons/material-icons.css';
 import 'quasar/src/css/index.sass';
+import './css/theme.css';
 import './css/app.scss';
 import App from './App.vue';
 import router from './router';
@@ -15,13 +16,13 @@ app.use(Quasar, {
   config: {
     brand: {
       primary:   '#1565C0',
-      secondary: '#0288D1',
-      accent:    '#00ACC1',
+      secondary: '#F9A825',
+      accent:    '#E91E8C',
       dark:      '#1A2035',
       positive:  '#2E7D32',
       negative:  '#C62828',
-      warning:   '#EF6C00',
-      info:      '#0277BD',
+      warning:   '#F57F17',
+      info:      '#0288D1',
     },
     notify: { position: 'top-right', timeout: 3000 },
   },
