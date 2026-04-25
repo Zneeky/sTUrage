@@ -1,0 +1,22 @@
+version: "3.9"
+
+# Local development overrides — not committed to production
+# This file is auto-merged with docker-compose.yml by Docker Compose
+
+services:
+  backend:
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/backend/src:/app/src   # hot reload source only
+    command: npm run dev
+
+  frontend:
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/frontend/src:/app/src
+
+  postgres:
+    ports:
+      - "5432:5432"   # expose only in dev
