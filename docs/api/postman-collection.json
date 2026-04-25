@@ -1,47 +1,81 @@
 {
   "info": {
     "name": "STURage API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "STURage Warehouse Inventory API — Sprint 1"
+    "_postman_id": "sturage-api-v1",
+    "description": "STURage Warehouse Inventory API — Sprint 1\n\nBase URL: http://localhost:3000/api\n\nWorkflow:\n1. Run 'Login' to set the {{token}} variable automatically.\n2. All other requests use {{token}} via the collection-level Authorization header.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:3000/api" },
-    { "key": "token", "value": "" }
+    { "key": "baseUrl", "value": "http://localhost:3000/api", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "productId", "value": "", "type": "string" },
+    { "key": "categoryId", "value": "", "type": "string" },
+    { "key": "supplierId", "value": "", "type": "string" },
+    { "key": "warehouseId", "value": "", "type": "string" }
   ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
   "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": "http://localhost:3000/health",
+            "description": "No auth required. Returns API status."
+          }
+        }
+      ]
+    },
     {
       "name": "Auth",
       "item": [
         {
           "name": "Register",
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
             "url": "{{baseUrl}}/auth/register",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"email\":\"user@example.com\",\"password\":\"Secure@123\",\"firstName\":\"Jane\",\"lastName\":\"Doe\"}"
-            }
+              "raw": "{\n  \"email\": \"newuser@sturage.local\",\n  \"password\": \"Secure@123\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\"\n}"
+            },
+            "description": "Register a new account. Default role is OPERATOR."
           }
         },
         {
-          "name": "Login",
+          "name": "Login (sets token)",
           "event": [
             {
               "listen": "test",
               "script": {
-                "exec": ["const r = pm.response.json(); pm.collectionVariables.set('token', r.data.token);"]
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.token) {",
+                  "  pm.collectionVariables.set('token', json.data.token);",
+                  "  console.log('Token saved to collection variable.');",
+                  "}"
+                ],
+                "type": "text/javascript"
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "POST",
             "url": "{{baseUrl}}/auth/login",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"email\":\"admin@sturage.local\",\"password\":\"Admin@123\"}"
-            }
+              "raw": "{\n  \"email\": \"admin@sturage.local\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "description": "Login as admin. The test script automatically saves the JWT to the {{token}} collection variable."
           }
         },
         {
@@ -49,7 +83,15 @@
           "request": {
             "method": "GET",
             "url": "{{baseUrl}}/auth/me",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+            "description": "Returns the authenticated user's profile."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/logout",
+            "description": "Stateless logout — client discards the token."
           }
         }
       ]
@@ -61,43 +103,209 @@
           "name": "List Products",
           "request": {
             "method": "GET",
-            "url": { "raw": "{{baseUrl}}/products?page=1&limit=20", "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "20" }] },
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+            "url": {
+              "raw": "{{baseUrl}}/products?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["products"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "search", "value": "", "disabled": true },
+                { "key": "categoryId", "value": "", "disabled": true },
+                { "key": "supplierId", "value": "", "disabled": true }
+              ]
+            }
           }
         },
         {
           "name": "Create Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('productId', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "url": "{{baseUrl}}/products",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\"sku\":\"ELEC-001\",\"name\":\"Laptop\",\"categoryId\":\"CATEGORY_ID\",\"unit\":\"pcs\",\"minStock\":5}" }
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"ELEC-999\",\n  \"name\": \"Test Product\",\n  \"description\": \"Created via Postman\",\n  \"categoryId\": \"{{categoryId}}\",\n  \"unit\": \"pcs\",\n  \"minStock\": 5\n}"
+            },
+            "description": "Requires ADMIN or MANAGER role."
           }
         },
         {
           "name": "Get Product",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/products/PRODUCT_ID",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+            "url": "{{baseUrl}}/products/{{productId}}"
           }
         },
         {
           "name": "Update Product",
           "request": {
             "method": "PUT",
-            "url": "{{baseUrl}}/products/PRODUCT_ID",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\"name\":\"Updated Name\"}" }
+            "url": "{{baseUrl}}/products/{{productId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Name\",\n  \"minStock\": 10\n}" }
           }
         },
         {
           "name": "Delete Product",
           "request": {
             "method": "DELETE",
-            "url": "{{baseUrl}}/products/PRODUCT_ID",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+            "url": "{{baseUrl}}/products/{{productId}}",
+            "description": "Requires ADMIN role. Soft deletes (isActive: false)."
           }
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "List Categories",
+          "request": { "method": "GET", "url": "{{baseUrl}}/categories" }
+        },
+        {
+          "name": "Create Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('categoryId', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/categories",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Category\",\n  \"description\": \"Created via Postman\"\n}" }
+          }
+        },
+        {
+          "name": "Get Category",
+          "request": { "method": "GET", "url": "{{baseUrl}}/categories/{{categoryId}}" }
+        },
+        {
+          "name": "Update Category",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/categories/{{categoryId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/categories/{{categoryId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Suppliers",
+      "item": [
+        {
+          "name": "List Suppliers",
+          "request": { "method": "GET", "url": "{{baseUrl}}/suppliers" }
+        },
+        {
+          "name": "Create Supplier",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('supplierId', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/suppliers",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Supplier\",\n  \"contactName\": \"Jane Doe\",\n  \"email\": \"jane@supplier.com\",\n  \"phone\": \"+359 88 000 0000\"\n}" }
+          }
+        },
+        {
+          "name": "Get Supplier",
+          "request": { "method": "GET", "url": "{{baseUrl}}/suppliers/{{supplierId}}" }
+        },
+        {
+          "name": "Update Supplier",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/suppliers/{{supplierId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"+359 88 111 2222\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Supplier",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/suppliers/{{supplierId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Warehouses",
+      "item": [
+        {
+          "name": "List Warehouses",
+          "request": { "method": "GET", "url": "{{baseUrl}}/warehouses" }
+        },
+        {
+          "name": "Create Warehouse",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.id) pm.collectionVariables.set('warehouseId', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/warehouses",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Test Warehouse\",\n  \"location\": \"Building C, Floor 1\",\n  \"description\": \"Created via Postman\"\n}" }
+          }
+        },
+        {
+          "name": "Get Warehouse",
+          "request": { "method": "GET", "url": "{{baseUrl}}/warehouses/{{warehouseId}}" }
+        },
+        {
+          "name": "Update Warehouse",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/warehouses/{{warehouseId}}",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"description\": \"Updated description\"\n}" }
+          }
+        },
+        {
+          "name": "Delete Warehouse",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/warehouses/{{warehouseId}}" }
         }
       ]
     },
@@ -108,8 +316,18 @@
           "name": "List Movements",
           "request": {
             "method": "GET",
-            "url": "{{baseUrl}}/stock-movements",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }]
+            "url": {
+              "raw": "{{baseUrl}}/stock-movements?page=1&limit=20",
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "type", "value": "INBOUND", "disabled": true },
+                { "key": "productId", "value": "", "disabled": true },
+                { "key": "warehouseId", "value": "", "disabled": true },
+                { "key": "from", "value": "2026-01-01", "disabled": true },
+                { "key": "to", "value": "2026-12-31", "disabled": true }
+              ]
+            }
           }
         },
         {
@@ -117,9 +335,40 @@
           "request": {
             "method": "POST",
             "url": "{{baseUrl}}/stock-movements",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }, { "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\"type\":\"INBOUND\",\"productId\":\"PRODUCT_ID\",\"quantity\":50,\"targetWarehouseId\":\"WAREHOUSE_ID\",\"note\":\"PO #123\"}" }
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"INBOUND\",\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 50,\n  \"targetWarehouseId\": \"{{warehouseId}}\",\n  \"note\": \"Purchase order PO-2026-001\"\n}"
+            }
           }
+        },
+        {
+          "name": "Outbound Movement",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/stock-movements",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"OUTBOUND\",\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 5,\n  \"sourceWarehouseId\": \"{{warehouseId}}\",\n  \"note\": \"Issued to department\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Transfer Movement",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/stock-movements",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"TRANSFER\",\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 10,\n  \"sourceWarehouseId\": \"{{warehouseId}}\",\n  \"targetWarehouseId\": \"SECOND_WAREHOUSE_ID\",\n  \"note\": \"Rebalancing stock\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Movement",
+          "request": { "method": "GET", "url": "{{baseUrl}}/stock-movements/MOVEMENT_ID" }
         }
       ]
     }
