@@ -10,10 +10,12 @@ RUN npm ci
 
 # ── Development ────────────────────────────────────────────
 FROM base AS development
+COPY apps/frontend/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 COPY . .
 WORKDIR /app/apps/frontend
 EXPOSE 5173
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # ── Builder ────────────────────────────────────────────────
 FROM base AS builder

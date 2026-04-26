@@ -74,7 +74,7 @@
             <div class="text-subtitle1 text-weight-medium">Movement History</div>
           </q-card-section>
           <q-card-section class="q-pt-sm">
-            <MovementsTable :movements="movements" :loading="movementsLoading" />
+            <MovementsTable :movements="movements" :loading="loading" />
           </q-card-section>
         </q-card>
       </div>
@@ -107,7 +107,6 @@ const authStore = useAuthStore();
 const product = ref<Product | null>(null);
 const movements = ref<StockMovement[]>([]);
 const loading = ref(false);
-const movementsLoading = ref(false);
 const showEdit = ref(false);
 const showMovement = ref(false);
 
@@ -130,15 +129,16 @@ const totalStock = computed(() =>
 
 async function loadProduct() {
   loading.value = true;
-  movementsLoading.value = true;
   try {
     const id = route.params.id as string;
-    [product.value] = await Promise.all([getProduct(id)]);
-    const res = await listMovements({ productId: id, limit: 20 });
-    movements.value = res.data;
+    const [prod, movRes] = await Promise.all([
+      getProduct(id),
+      listMovements({ productId: id, limit: 20 }),
+    ]);
+    product.value = prod;
+    movements.value = movRes.data;
   } finally {
     loading.value = false;
-    movementsLoading.value = false;
   }
 }
 
