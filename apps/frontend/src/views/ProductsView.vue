@@ -134,7 +134,7 @@ function rowClass(row: Product) {
 watch(searchInput, (v) => { store.search = v; store.resetPage(); store.fetchProducts(); });
 watch(selectedCategory, (v) => { store.categoryId = v; store.resetPage(); store.fetchProducts(); });
 watch(selectedSupplier, (v) => { store.supplierId = v; store.resetPage(); store.fetchProducts(); });
-watch(() => store.page, () => store.fetchProducts());
+watch(() => store.page, (newPage, oldPage) => { if (newPage !== oldPage) store.fetchProducts(); });
 
 onMounted(async () => {
   [categories.value, suppliers.value] = await Promise.all([listCategories(), listSuppliers()]);
