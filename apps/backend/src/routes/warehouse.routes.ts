@@ -1,11 +1,13 @@
 import { Router } from 'express';
+import { authenticate, authorize } from '../middleware/auth';
+import { listWarehouses, getWarehouse, createWarehouse, updateWarehouse, deleteWarehouse } from '../controllers/warehouse.controller';
 
 const router = Router();
 
-router.get('/', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.post('/', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.get('/:id', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.put('/:id', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
-router.delete('/:id', (_req, res) => res.status(501).json({ message: 'Not implemented yet' }));
+router.get('/', authenticate, listWarehouses);
+router.get('/:id', authenticate, getWarehouse);
+router.post('/', authenticate, authorize('ADMIN', 'MANAGER'), createWarehouse);
+router.put('/:id', authenticate, authorize('ADMIN', 'MANAGER'), updateWarehouse);
+router.delete('/:id', authenticate, authorize('ADMIN'), deleteWarehouse);
 
 export default router;

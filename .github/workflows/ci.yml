@@ -19,6 +19,21 @@ jobs:
     name: "Backend — lint, build, test"
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,6 +56,11 @@ jobs:
 
       - name: Build
         run: npm run build --workspace=apps/backend
+
+      - name: Push database schema
+        run: npx prisma db push --schema=apps/backend/prisma/schema.prisma
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test_db
 
       - name: Test
         run: npm test --workspace=apps/backend
