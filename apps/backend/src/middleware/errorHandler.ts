@@ -20,8 +20,23 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
   }
 
   if (err instanceof PrismaClientKnownRequestError) {
-    if (err.code === 'P2002') return res.status(409).json({ status: 409, error: 'Resource already exists' });
+    if (err.code === 'P2002') {
+      const target = err.meta?.target;
+      const fields = Array.isArray(target) ? target : (typeof target === 'string' ? [target] : []);
+      const field = fields[0]?.toString() ?? '';
+      const message = duplicateMessageFor(field);
+      return res.status(409).json({ status: 409, error: message });
+    }
     if (err.code === 'P2025') return res.status(404).json({ status: 404, error: 'Resource not found' });
+    if (err.code === 'P2003') {
+      const fieldName = (err.meta?.field_name as string | undefined) ?? '';
+      const message = fieldName.includes('categoryId')   ? 'Selected category does not exist'
+                    : fieldName.includes('supplierId')   ? 'Selected supplier does not exist'
+                    : fieldName.includes('warehouseId')  ? 'Selected warehouse does not exist'
+                    : fieldName.includes('productId')    ? 'Selected product does not exist'
+                    : 'Referenced record does not exist';
+      return res.status(400).json({ status: 400, error: message });
+    }
   }
 
   if (err instanceof JsonWebTokenError || err instanceof TokenExpiredError) {
@@ -44,4 +59,18 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
 
 export function notFound(_req: Request, res: Response) {
   res.status(404).json({ status: 404, error: 'Route not found' });
+}
+
+function duplicateMessageFor(field: string): string {
+  switch (field) {
+    case 'email':                return 'A user with this email already exists';
+    case 'sku':                  return 'A product with this SKU already exists';
+    case 'name':                 return 'An entry with this name already exists';
+    case 'productId_warehouseId':
+    case 'productId,warehouseId':
+      return 'Stock entry for this product and warehouse already exists';
+    default: return field
+      ? `A record with this ${field} already exists`
+      : 'A record with these values already exists';
+  }
 }
