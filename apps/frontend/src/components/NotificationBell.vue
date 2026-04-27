@@ -50,8 +50,7 @@ const bellBtn = ref(null);
 let intervalId: ReturnType<typeof setInterval> | null = null;
 
 async function markAll() {
-  const unread = store.items.filter(n => !n.isRead);
-  await Promise.all(unread.map(n => store.markRead(n.id)));
+  await store.markAllRead();
 }
 
 onMounted(() => {

@@ -21,3 +21,20 @@ export async function markRead(req: AuthRequest, res: Response, next: NextFuncti
     res.json({ data: notification });
   } catch (err) { next(err); }
 }
+
+export async function markAllRead(_req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const result = await prisma.notification.updateMany({
+      where: { isRead: false },
+      data: { isRead: true },
+    });
+    res.json({ data: { updated: result.count } });
+  } catch (err) { next(err); }
+}
+
+export async function deleteNotification(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    await prisma.notification.delete({ where: { id: req.params.id } });
+    res.status(204).send();
+  } catch (err) { next(err); }
+}
