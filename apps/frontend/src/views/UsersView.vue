@@ -10,7 +10,7 @@
     <q-tab-panels v-model="activeTab" animated>
       <!-- Users tab -->
       <q-tab-panel name="users" class="q-pa-none">
-        <div class="row justify-end q-mb-md">
+        <div v-if="canAdmin" class="row justify-end q-mb-md">
           <q-btn label="Add User" icon="person_add" color="primary" unelevated @click="openForm(null)" />
         </div>
 
@@ -35,14 +35,16 @@
           </template>
           <template #body-cell-actions="{ row }">
             <q-td class="text-right">
-              <q-btn flat round dense icon="edit" size="sm" color="primary" @click="openForm(row)" />
-              <q-btn
-                flat round dense icon="block" size="sm" color="warning"
-                :disable="!row.isActive"
-                @click="confirmDeactivate(row)"
-              >
-                <q-tooltip>Deactivate</q-tooltip>
-              </q-btn>
+              <template v-if="canAdmin">
+                <q-btn flat round dense icon="edit" size="sm" color="primary" @click="openForm(row)" />
+                <q-btn
+                  flat round dense icon="block" size="sm" color="warning"
+                  :disable="!row.isActive"
+                  @click="confirmDeactivate(row)"
+                >
+                  <q-tooltip>Deactivate</q-tooltip>
+                </q-btn>
+              </template>
             </q-td>
           </template>
         </q-table>
@@ -80,14 +82,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useUsersStore } from '@/stores/users';
+import { useAuthStore } from '@/stores/auth';
 import UserFormDialog from '@/components/UserFormDialog.vue';
 import type { User } from '@/api/users.api';
 
 const $q = useQuasar();
 const store = useUsersStore();
+const authStore = useAuthStore();
+const canAdmin = computed(() => authStore.user?.role === 'ADMIN');
 const activeTab = ref('users');
 const showForm = ref(false);
 const selectedUser = ref<User | null>(null);

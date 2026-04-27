@@ -149,8 +149,14 @@ function confirmDelete() {
     ok: { label: 'Delete', color: 'negative', unelevated: true },
     cancel: { label: 'Cancel', flat: true },
   }).onOk(async () => {
-    await deleteProduct(product.value!.id);
-    router.push('/products');
+    try {
+      await deleteProduct(product.value!.id);
+      $q.notify({ type: 'positive', message: 'Product deleted' });
+      router.push('/products');
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Failed to delete product';
+      $q.notify({ type: 'negative', message: msg });
+    }
   });
 }
 

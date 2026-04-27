@@ -57,8 +57,9 @@ async function handleSubmit() {
     emit('saved');
     open.value = false;
     $q.notify({ type: 'positive', message: props.category ? 'Category updated' : 'Category created' });
-  } catch {
-    $q.notify({ type: 'negative', message: 'Failed to save category' });
+  } catch (err: unknown) {
+    const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Failed to save category';
+    $q.notify({ type: 'negative', message: msg });
   } finally {
     saving.value = false;
   }
