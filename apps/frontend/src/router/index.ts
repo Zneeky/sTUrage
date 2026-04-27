@@ -39,6 +39,11 @@ const router = createRouter({
       meta: { layout: 'AppLayout' },
     },
     {
+      path: '/suppliers',
+      component: () => import('@/views/SuppliersView.vue'),
+      meta: { layout: 'AppLayout' },
+    },
+    {
       path: '/stock-movements',
       component: () => import('@/views/StockMovementsView.vue'),
       meta: { layout: 'AppLayout' },

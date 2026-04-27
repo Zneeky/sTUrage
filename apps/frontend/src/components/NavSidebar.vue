@@ -79,6 +79,7 @@ const navItems = [
   { label: 'Dashboard',       icon: 'dashboard',        to: '/dashboard' },
   { label: 'Products',        icon: 'inventory_2',       to: '/products' },
   { label: 'Categories',      icon: 'category',          to: '/categories' },
+  { label: 'Suppliers',       icon: 'local_shipping',    to: '/suppliers' },
   { label: 'Stock Movements', icon: 'swap_horiz',        to: '/stock-movements' },
   { label: 'Reports',         icon: 'bar_chart',         to: '/reports' },
   { label: 'Users',           icon: 'manage_accounts',   to: '/users', adminOnly: true },
