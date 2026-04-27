@@ -1,6 +1,7 @@
 import prisma from '../utils/prisma';
 import logger from '../utils/logger';
 import { sendLowStockEmail } from './email.service';
+import { broadcast } from './sseClients';
 
 // Fired after every stock movement. Decides whether the product is now
 // out of stock (qty = 0) or low (0 < qty <= minStock) and writes one
@@ -28,7 +29,9 @@ export async function checkLowStock(productId: string): Promise<void> {
   });
   if (existing) return;
 
-  await prisma.notification.create({ data: { productId, type, message } });
+  const notification = await prisma.notification.create({ data: { productId, type, message } });
+
+  broadcast('notification', notification);
 
   sendLowStockEmail(product.name, totalStock, product.minStock)
     .catch((err) => logger.error('Low stock email failed', { err, productId }));

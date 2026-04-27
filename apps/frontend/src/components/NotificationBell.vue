@@ -47,18 +47,38 @@ import NotificationItem from './NotificationItem.vue';
 
 const store = useNotificationsStore();
 const bellBtn = ref(null);
-let intervalId: ReturnType<typeof setInterval> | null = null;
+let es: EventSource | null = null;
 
 async function markAll() {
   await store.markAllRead();
 }
 
+function connectSSE() {
+  const token = localStorage.getItem('token');
+  if (!token) return;
+
+  const base = import.meta.env.VITE_API_BASE_URL ?? '';
+  es = new EventSource(`${base}/api/notifications/stream?token=${encodeURIComponent(token)}`);
+
+  es.addEventListener('notification', () => {
+    store.fetch();
+  });
+
+  es.onerror = () => {
+    es?.close();
+    es = null;
+    // Reconnect after 10 s on error
+    setTimeout(connectSSE, 10000);
+  };
+}
+
 onMounted(() => {
   store.fetch();
-  intervalId = setInterval(() => store.fetch(), 60000);
+  connectSSE();
 });
 
 onUnmounted(() => {
-  if (intervalId) clearInterval(intervalId);
+  es?.close();
+  es = null;
 });
 </script>
