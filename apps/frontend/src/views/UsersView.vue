@@ -38,11 +38,18 @@
               <template v-if="canAdmin">
                 <q-btn flat round dense icon="edit" size="sm" color="primary" @click="openForm(row)" />
                 <q-btn
+                  v-if="row.isActive"
                   flat round dense icon="block" size="sm" color="warning"
-                  :disable="!row.isActive"
                   @click="confirmDeactivate(row)"
                 >
                   <q-tooltip>Deactivate</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-else
+                  flat round dense icon="check_circle" size="sm" color="positive"
+                  @click="confirmActivate(row)"
+                >
+                  <q-tooltip>Activate</q-tooltip>
                 </q-btn>
               </template>
             </q-td>
@@ -143,6 +150,23 @@ function confirmDeactivate(user: User) {
     try {
       await store.deactivate(user.id);
       $q.notify({ type: 'positive', message: 'User deactivated' });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Failed';
+      $q.notify({ type: 'negative', message: msg });
+    }
+  });
+}
+
+function confirmActivate(user: User) {
+  $q.dialog({
+    title: 'Activate User',
+    message: `Activate ${user.firstName} ${user.lastName}?`,
+    ok: { label: 'Activate', color: 'positive', unelevated: true },
+    cancel: { label: 'Cancel', flat: true },
+  }).onOk(async () => {
+    try {
+      await store.activate(user.id);
+      $q.notify({ type: 'positive', message: 'User activated' });
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error ?? 'Failed';
       $q.notify({ type: 'negative', message: msg });
