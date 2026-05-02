@@ -12,8 +12,8 @@
       <!-- Current Stock -->
       <q-tab-panel name="stock" class="q-pa-none">
         <div class="row justify-end q-gutter-sm q-mb-md">
-          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.stock_pdf"   @click="download('stock','pdf')" />
-          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.stock_excel" @click="download('stock','excel')" />
+          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.stock_pdf"   :disable="!stockRows.length" @click="download('stock','pdf')" />
+          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.stock_excel" :disable="!stockRows.length" @click="download('stock','excel')" />
         </div>
         <q-table
           :rows="stockRows"
@@ -33,8 +33,8 @@
           <q-input v-model="dateTo"   label="To"   type="date" outlined dense style="min-width:160px;" />
           <q-btn label="Generate" icon="refresh" color="primary" unelevated @click="loadMovement" :loading="loading.movement" />
           <q-space />
-          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.movement_pdf"   @click="download('movement','pdf')" />
-          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.movement_excel" @click="download('movement','excel')" />
+          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.movement_pdf"   :disable="!movementRows.length" @click="download('movement','pdf')" />
+          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.movement_excel" :disable="!movementRows.length" @click="download('movement','excel')" />
         </div>
         <q-table
           :rows="movementRows"
@@ -54,8 +54,8 @@
       <!-- Low Stock -->
       <q-tab-panel name="lowstock" class="q-pa-none">
         <div class="row justify-end q-gutter-sm q-mb-md">
-          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.lowstock_pdf"   @click="download('lowstock','pdf')" />
-          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.lowstock_excel" @click="download('lowstock','excel')" />
+          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.lowstock_pdf"   :disable="!lowStockRows.length" @click="download('lowstock','pdf')" />
+          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.lowstock_excel" :disable="!lowStockRows.length" @click="download('lowstock','excel')" />
         </div>
         <q-table
           :rows="lowStockRows"
