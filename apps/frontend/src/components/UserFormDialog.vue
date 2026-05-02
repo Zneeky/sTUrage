@@ -11,22 +11,22 @@
         <q-form @submit="handleSubmit" class="q-gutter-sm">
           <div class="row q-col-gutter-sm">
             <div class="col-6">
-              <q-input v-model="form.firstName" label="First Name *" outlined dense
+              <q-input v-model="form.firstName" label="First Name *" outlined dense bottom-slots
                 :rules="[v => !!v || 'Required']" />
             </div>
             <div class="col-6">
-              <q-input v-model="form.lastName" label="Last Name *" outlined dense
+              <q-input v-model="form.lastName" label="Last Name *" outlined dense bottom-slots
                 :rules="[v => !!v || 'Required']" />
             </div>
           </div>
-          <q-input v-model="form.email" label="Email *" type="email" outlined dense
+          <q-input v-model="form.email" label="Email *" type="email" outlined dense bottom-slots
             :rules="[v => !!v || 'Required']" />
           <q-input
             v-if="!user"
             v-model="form.password"
             label="Password *"
             :type="showPwd ? 'text' : 'password'"
-            outlined dense
+            outlined dense bottom-slots
             :rules="[v => !user ? (v?.length >= 8 || 'Min 8 characters') : true]"
           >
             <template #append>
@@ -37,7 +37,7 @@
             v-model="form.role"
             :options="roleOptions"
             label="Role *"
-            outlined dense
+            outlined dense bottom-slots
             :rules="[v => !!v || 'Required']"
           />
           <div class="row justify-end q-gutter-sm q-mt-sm">
