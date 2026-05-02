@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { listUsers, createUser, updateUser, deactivateUser, listAuditLog } from '@/api/users.api';
+import { listUsers, createUser, updateUser, deactivateUser, activateUser, listAuditLog } from '@/api/users.api';
 import type { User, AuditEntry, CreateUserDto, UpdateUserDto } from '@/api/users.api';
 
 export const useUsersStore = defineStore('users', () => {
@@ -43,6 +43,11 @@ export const useUsersStore = defineStore('users', () => {
     await fetchUsers();
   }
 
+  async function activate(id: string) {
+    await activateUser(id);
+    await fetchUsers();
+  }
+
   async function fetchAuditLog() {
     auditLoading.value = true;
     try {
@@ -56,6 +61,6 @@ export const useUsersStore = defineStore('users', () => {
     users, usersPage, usersLimit, usersTotal,
     auditLog, auditPage, auditLimit, auditTotal,
     loading, auditLoading,
-    fetchUsers, resetUsersPage, addUser, editUser, deactivate, fetchAuditLog,
+    fetchUsers, resetUsersPage, addUser, editUser, deactivate, activate, fetchAuditLog,
   };
 });
