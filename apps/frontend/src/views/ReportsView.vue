@@ -29,12 +29,17 @@
       <!-- Movement Report -->
       <q-tab-panel name="movement" class="q-pa-none">
         <div class="filter-bar q-mb-md">
-          <q-input v-model="dateFrom" label="From" type="date" outlined dense style="min-width:160px;" />
-          <q-input v-model="dateTo"   label="To"   type="date" outlined dense style="min-width:160px;" />
-          <q-btn label="Generate" icon="refresh" color="primary" unelevated @click="loadMovement" :loading="loading.movement" />
+          <q-input v-model="dateFrom" label="From" type="date" outlined dense style="min-width:160px;"
+            @update:model-value="() => { if (dateTo && dateFrom > dateTo) dateTo = ''; }"
+          />
+          <q-input v-model="dateTo" label="To" type="date" outlined dense style="min-width:160px;"
+            :rules="[v => !v || !dateFrom || v >= dateFrom || 'Must be on or after From date']"
+            bottom-slots
+          />
+          <q-btn label="Generate" icon="refresh" color="primary" unelevated :loading="loading.movement" :disable="dateRangeInvalid" @click="loadMovement" />
           <q-space />
-          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.movement_pdf"   @click="download('movement','pdf')" />
-          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.movement_excel" @click="download('movement','excel')" />
+          <q-btn label="PDF"   icon="picture_as_pdf" outline color="negative" size="sm" :loading="downloading.movement_pdf"   :disable="dateRangeInvalid" @click="download('movement','pdf')" />
+          <q-btn label="Excel" icon="table_chart"    outline color="positive" size="sm" :loading="downloading.movement_excel" :disable="dateRangeInvalid" @click="download('movement','excel')" />
         </div>
         <q-table
           :rows="movementRows"
@@ -72,13 +77,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { currentStockReport, movementReport, lowStockReport, downloadBlob } from '@/api/reports.api';
 import MovementTypeBadge from '@/components/MovementTypeBadge.vue';
 
 const activeTab = ref('stock');
 const dateFrom = ref('');
 const dateTo = ref('');
+const dateRangeInvalid = computed(() => !!(dateFrom.value && dateTo.value && dateFrom.value > dateTo.value));
 
 const loading = ref({ stock: false, movement: false, lowstock: false });
 const downloading = ref({
