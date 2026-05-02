@@ -74,7 +74,7 @@
             <q-td>{{ formatDate(value) }}</q-td>
           </template>
         </q-table>
-        <div class="row justify-center q-mt-md">
+        <div v-if="store.auditTotal > 0" class="row justify-center q-mt-md">
           <q-pagination
             v-model="store.auditPage"
             :max="Math.ceil(store.auditTotal / store.auditLimit) || 1"
