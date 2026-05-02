@@ -34,7 +34,6 @@
           />
           <q-input v-model="dateTo" label="To" type="date" outlined dense style="min-width:160px;"
             :rules="[v => !v || !dateFrom || v >= dateFrom || 'Must be on or after From date']"
-            bottom-slots
           />
           <q-btn label="Generate" icon="refresh" color="primary" unelevated :loading="loading.movement" :disable="dateRangeInvalid" @click="loadMovement" />
           <q-space />
