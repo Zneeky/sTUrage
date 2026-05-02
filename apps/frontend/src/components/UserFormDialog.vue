@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="open" persistent>
-    <q-card style="min-width: 440px;">
+    <q-card style="width: 440px; max-width: 90vw;">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">{{ user ? 'Edit User' : 'Add User' }}</div>
         <q-space />
