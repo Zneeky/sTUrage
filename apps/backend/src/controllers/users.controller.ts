@@ -55,6 +55,8 @@ export async function getUser(req: AuthRequest, res: Response, next: NextFunctio
 export async function createUser(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const data = createSchema.parse(req.body);
+    const existing = await prisma.user.findUnique({ where: { email: data.email }, select: { id: true } });
+    if (existing) return res.status(409).json({ status: 409, error: 'A user with this email already exists' });
     const password = await bcrypt.hash(data.password, 10);
     const user = await prisma.user.create({ data: { ...data, password }, select: userSelect });
     res.status(201).json({ data: user });
@@ -64,6 +66,10 @@ export async function createUser(req: AuthRequest, res: Response, next: NextFunc
 export async function updateUser(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const data = updateSchema.parse(req.body);
+    if (data.email) {
+      const conflict = await prisma.user.findFirst({ where: { email: data.email, NOT: { id: req.params.id } }, select: { id: true } });
+      if (conflict) return res.status(409).json({ status: 409, error: 'A user with this email already exists' });
+    }
     const user = await prisma.user.update({ where: { id: req.params.id }, data, select: userSelect });
     res.json({ data: user });
   } catch (err) { next(err); }
