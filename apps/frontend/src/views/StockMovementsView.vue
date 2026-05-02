@@ -19,6 +19,7 @@
         :options="typeOptions"
         label="Type"
         outlined dense multiple clearable
+        bottom-slots
         style="min-width: 200px;"
         @update:model-value="onFilterChange"
       />
@@ -30,6 +31,7 @@
         use-input clearable
         label="Product"
         outlined dense
+        bottom-slots
         style="min-width: 200px;"
         @filter="filterProducts"
         @update:model-value="onFilterChange"
