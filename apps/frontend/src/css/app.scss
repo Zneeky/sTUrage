@@ -53,3 +53,10 @@ body {
 .sidebar .nav-item--active .q-item__section {
   color: white !important;
 }
+
+/* Center the browser native spin buttons vertically inside q-input */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  height: auto;
+  margin: auto 0;
+}
