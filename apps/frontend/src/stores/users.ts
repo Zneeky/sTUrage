@@ -23,6 +23,9 @@ export const useUsersStore = defineStore('users', () => {
       const res = await listUsers({ page: usersPage.value, limit: usersLimit.value });
       users.value = res.data;
       usersTotal.value = res.total;
+    } catch (err) {
+      // Do not clear existing data on error — preserve whatever was loaded before
+      throw err;
     } finally { loading.value = false; }
   }
 
@@ -49,6 +52,8 @@ export const useUsersStore = defineStore('users', () => {
       const res = await listAuditLog({ page: auditPage.value, limit: auditLimit.value });
       auditLog.value = res.data;
       auditTotal.value = res.total;
+    } catch (err) {
+      throw err;
     } finally { auditLoading.value = false; }
   }
 
