@@ -21,7 +21,11 @@
       <div class="col-xs-12 col-md-8">
         <q-card flat bordered>
           <q-card-section class="q-pb-none">
-            <div class="text-subtitle1 text-weight-medium">Recent Movements</div>
+            <div class="row items-center">
+              <div class="text-subtitle1 text-weight-medium">Recent Movements</div>
+              <q-space />
+              <q-btn label="View all" flat dense size="sm" color="primary" to="/movements" />
+            </div>
           </q-card-section>
           <q-card-section class="q-pt-sm">
             <MovementsTable :movements="store.recentMovements" :loading="store.loading" />
