@@ -29,10 +29,10 @@
       <!-- Movement Report -->
       <q-tab-panel name="movement" class="q-pa-none">
         <div class="filter-bar q-mb-md">
-          <q-input v-model="dateFrom" label="From" type="date" outlined dense style="min-width:160px;"
-            @update:model-value="() => { if (dateTo && dateFrom > dateTo) dateTo = ''; }"
+          <q-input v-model="dateFrom" label="From" type="date" outlined dense bottom-slots style="min-width:160px;"
+            @update:model-value="onDateFromChange"
           />
-          <q-input v-model="dateTo" label="To" type="date" outlined dense style="min-width:160px;"
+          <q-input ref="dateToInput" v-model="dateTo" label="To" type="date" outlined dense bottom-slots style="min-width:160px;"
             :rules="[v => !v || !dateFrom || v >= dateFrom || 'Must be on or after From date']"
           />
           <q-btn label="Generate" icon="refresh" color="primary" unelevated :loading="loading.movement" :disable="dateRangeInvalid" @click="loadMovement" />
@@ -77,13 +77,19 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { QInput } from 'quasar';
 import { currentStockReport, movementReport, lowStockReport, downloadBlob } from '@/api/reports.api';
 import MovementTypeBadge from '@/components/MovementTypeBadge.vue';
 
 const activeTab = ref('stock');
 const dateFrom = ref('');
 const dateTo = ref('');
+const dateToInput = ref<InstanceType<typeof QInput> | null>(null);
 const dateRangeInvalid = computed(() => !!(dateFrom.value && dateTo.value && dateFrom.value > dateTo.value));
+
+function onDateFromChange() {
+  dateToInput.value?.validate();
+}
 
 const loading = ref({ stock: false, movement: false, lowstock: false });
 const downloading = ref({
