@@ -20,7 +20,10 @@ const productSelect = {
   isActive: true, createdAt: true, updatedAt: true,
   category: { select: { id: true, name: true } },
   supplier: { select: { id: true, name: true } },
-  stockItems: { select: { quantity: true, warehouse: { select: { id: true, name: true } } } },
+  stockItems: {
+    where: { warehouse: { isActive: true } },
+    select: { quantity: true, warehouse: { select: { id: true, name: true } } },
+  },
 };
 
 export async function listProducts(req: AuthRequest, res: Response, next: NextFunction) {
