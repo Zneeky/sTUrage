@@ -20,7 +20,7 @@ export const useMovementsStore = defineStore('movements', () => {
       const res = await listMovements({
         page: page.value,
         limit: limit.value,
-        type: filterType.value.length === 1 ? filterType.value[0] : undefined,
+        type: filterType.value.length > 0 ? filterType.value.join(',') : undefined,
         productId: filterProductId.value || undefined,
         dateFrom: filterDateFrom.value || undefined,
         dateTo: filterDateTo.value || undefined,
