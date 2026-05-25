@@ -1,21 +1,19 @@
 <template>
-  <q-chip
-    dense
-    :color="colorMap[type]"
-    text-color="white"
-    :label="type"
-    class="text-weight-medium"
-    style="font-size: 0.7rem;"
-  />
+  <span :class="['badge-soft', colorClass]">{{ type }}</span>
 </template>
 
 <script setup lang="ts">
-defineProps<{ type: 'INBOUND' | 'OUTBOUND' | 'TRANSFER' | 'ADJUSTMENT' }>();
+import { computed } from 'vue';
 
-const colorMap = {
-  INBOUND:    'positive',
-  OUTBOUND:   'negative',
-  TRANSFER:   'info',
-  ADJUSTMENT: 'warning',
-} as const;
+const props = defineProps<{ type: 'INBOUND' | 'OUTBOUND' | 'TRANSFER' | 'ADJUSTMENT' }>();
+
+const colorClass = computed(() => {
+  const map: Record<string, string> = {
+    INBOUND:    'badge-soft--green',
+    OUTBOUND:   'badge-soft--red',
+    TRANSFER:   'badge-soft--blue',
+    ADJUSTMENT: 'badge-soft--amber',
+  };
+  return map[props.type] ?? 'badge-soft--gray';
+});
 </script>

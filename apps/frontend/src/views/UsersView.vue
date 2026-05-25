@@ -1,6 +1,10 @@
 <template>
   <q-page>
-    <div class="page-title">User Management</div>
+    <div class="row items-center q-mb-md">
+      <div class="page-title q-mb-none">User Management</div>
+      <q-space />
+      <q-btn v-if="canAdmin" label="Add User" icon="person_add" color="primary" unelevated @click="openForm(null)" />
+    </div>
 
     <q-tabs v-model="activeTab" align="left" color="primary" class="q-mb-md">
       <q-tab name="users"    label="Users"     icon="manage_accounts" />
@@ -10,10 +14,6 @@
     <q-tab-panels v-model="activeTab" animated>
       <!-- Users tab -->
       <q-tab-panel name="users" class="q-pa-none">
-        <div v-if="canAdmin" class="row justify-end q-mb-md">
-          <q-btn label="Add User" icon="person_add" color="primary" unelevated @click="openForm(null)" />
-        </div>
-
         <q-table
           :rows="store.users"
           :columns="userColumns"
@@ -21,6 +21,7 @@
           :loading="store.loading"
           flat bordered
           :rows-per-page-options="[]"
+          :pagination="{ rowsPerPage: 0 }"
           hide-bottom
         >
           <template #body-cell-role="{ value }">
@@ -57,7 +58,7 @@
         </q-table>
         <div class="row justify-center q-mt-md">
           <q-pagination
-            v-model="store.usersPage"
+            v-model="usersPage"
             :max="Math.ceil(store.usersTotal / store.usersLimit) || 1"
             :max-pages="7"
             boundary-numbers
@@ -75,6 +76,7 @@
           :loading="store.auditLoading"
           flat bordered dense
           :rows-per-page-options="[]"
+          :pagination="{ rowsPerPage: 0 }"
           hide-bottom
         >
           <template #body-cell-createdAt="{ value }">
@@ -83,7 +85,7 @@
         </q-table>
         <div class="row justify-center q-mt-md">
           <q-pagination
-            v-model="store.auditPage"
+            v-model="auditPage"
             :max="Math.ceil(store.auditTotal / store.auditLimit) || 1"
             :max-pages="7"
             boundary-numbers
@@ -99,6 +101,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { useUsersStore } from '@/stores/users';
 import { useAuthStore } from '@/stores/auth';
@@ -107,6 +110,7 @@ import type { User } from '@/api/users.api';
 
 const $q = useQuasar();
 const store = useUsersStore();
+const { usersPage, auditPage } = storeToRefs(store);
 const authStore = useAuthStore();
 const canAdmin = computed(() => authStore.user?.role === 'ADMIN');
 const activeTab = ref('users');
@@ -174,8 +178,8 @@ function confirmActivate(user: User) {
   });
 }
 
-watch(() => store.usersPage, () => store.fetchUsers());
-watch(() => store.auditPage, () => store.fetchAuditLog());
+watch(usersPage, () => store.fetchUsers());
+watch(auditPage, () => store.fetchAuditLog());
 watch(activeTab, (tab) => { if (tab === 'auditlog' && !store.auditLog.length) store.fetchAuditLog(); });
 onMounted(() => store.fetchUsers());
 </script>

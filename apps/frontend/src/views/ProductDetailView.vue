@@ -74,7 +74,16 @@
             <div class="text-subtitle1 text-weight-medium">Movement History</div>
           </q-card-section>
           <q-card-section class="q-pt-sm">
-            <MovementsTable :movements="movements" :loading="loading" />
+            <MovementsTable :movements="movements" :loading="movLoading" />
+            <div class="row justify-center q-mt-sm">
+              <q-pagination
+                v-model="movPage"
+                :max="Math.ceil(movTotal / movLimit) || 1"
+                :max-pages="5"
+                boundary-numbers
+                color="primary"
+              />
+            </div>
           </q-card-section>
         </q-card>
       </div>
@@ -86,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { getProduct, deleteProduct } from '@/api/products.api';
@@ -107,8 +116,12 @@ const authStore = useAuthStore();
 const product = ref<Product | null>(null);
 const movements = ref<StockMovement[]>([]);
 const loading = ref(false);
+const movLoading = ref(false);
 const showEdit = ref(false);
 const showMovement = ref(false);
+const movPage = ref(1);
+const movTotal = ref(0);
+const movLimit = 10;
 
 const canEdit = computed(() => ['ADMIN', 'MANAGER'].includes(authStore.user?.role ?? ''));
 const canDelete = computed(() => authStore.user?.role === 'ADMIN');
@@ -127,20 +140,30 @@ const totalStock = computed(() =>
   product.value?.stockItems.reduce((s, si) => s + si.quantity, 0) ?? 0
 );
 
+async function loadMovements() {
+  movLoading.value = true;
+  try {
+    const id = route.params.id as string;
+    const res = await listMovements({ productId: id, page: movPage.value, limit: movLimit });
+    movements.value = res.data;
+    movTotal.value = res.total;
+  } finally {
+    movLoading.value = false;
+  }
+}
+
 async function loadProduct() {
   loading.value = true;
   try {
     const id = route.params.id as string;
-    const [prod, movRes] = await Promise.all([
-      getProduct(id),
-      listMovements({ productId: id, limit: 20 }),
-    ]);
+    const [prod] = await Promise.all([getProduct(id), loadMovements()]);
     product.value = prod;
-    movements.value = movRes.data;
   } finally {
     loading.value = false;
   }
 }
+
+watch(movPage, loadMovements);
 
 function confirmDelete() {
   $q.dialog({

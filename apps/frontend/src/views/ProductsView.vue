@@ -48,6 +48,7 @@
       :loading="store.loading"
       flat bordered
       :rows-per-page-options="[]"
+      :pagination="{ rowsPerPage: 0 }"
       hide-bottom
       :row-class="rowClass"
     >
@@ -72,8 +73,8 @@
 
     <div class="row justify-center q-mt-md">
       <q-pagination
-        v-model="store.page"
-        :max="Math.ceil(store.total / store.limit)"
+        v-model="productsPage"
+        :max="Math.ceil(store.total / store.limit) || 1"
         :max-pages="7"
         boundary-numbers
         color="primary"
@@ -90,6 +91,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { useProductsStore } from '@/stores/products';
 import { useAuthStore } from '@/stores/auth';
@@ -103,6 +105,7 @@ import type { Supplier } from '@/api/suppliers.api';
 
 const $q = useQuasar();
 const store = useProductsStore();
+const { page: productsPage } = storeToRefs(store);
 const authStore = useAuthStore();
 const canEdit = computed(() => ['ADMIN', 'MANAGER'].includes(authStore.user?.role ?? ''));
 
@@ -134,7 +137,7 @@ function rowClass(row: Product) {
 watch(searchInput, (v) => { store.search = v; store.resetPage(); store.fetchProducts(); });
 watch(selectedCategory, (v) => { store.categoryId = v; store.resetPage(); store.fetchProducts(); });
 watch(selectedSupplier, (v) => { store.supplierId = v; store.resetPage(); store.fetchProducts(); });
-watch(() => store.page, (newPage, oldPage) => { if (newPage !== oldPage) store.fetchProducts(); });
+watch(productsPage, () => store.fetchProducts());
 
 onMounted(async () => {
   [categories.value, suppliers.value] = await Promise.all([listCategories(), listSuppliers()]);

@@ -8,6 +8,7 @@
     bordered
     dense
     :rows-per-page-options="[]"
+    :pagination="{ rowsPerPage: 0 }"
     hide-bottom
   >
     <template #body-cell-type="{ value }">

@@ -1,12 +1,13 @@
 <template>
   <div>
-    <q-btn flat round dense icon="notifications" color="white" ref="bellBtn">
-      <q-badge v-if="store.unreadCount > 0" color="negative" floating>
+    <q-btn flat round dense ref="bellBtn" class="notif-bell-btn">
+      <q-icon name="notifications" size="20px" style="color: var(--stu-gray-500);" />
+      <q-badge v-if="store.unreadCount > 0" color="negative" floating style="top: 6px; right: 6px;">
         {{ store.unreadCount > 9 ? '9+' : store.unreadCount }}
       </q-badge>
       <q-menu anchor="bottom right" self="top right" style="min-width: 320px; max-width: 360px;">
         <div class="row items-center q-px-md q-pt-sm q-pb-xs">
-          <span class="text-subtitle2 text-weight-medium">Notifications</span>
+          <span class="text-subtitle2 text-weight-bold" style="color: var(--stu-gray-900);">Notifications</span>
           <q-space />
           <q-btn
             v-if="store.unreadCount > 0"
@@ -27,7 +28,7 @@
           </q-list>
         </q-scroll-area>
 
-        <div v-else class="text-center text-grey-5 text-caption q-pa-lg">
+        <div v-else class="text-center text-caption q-pa-lg" style="color: var(--stu-gray-400);">
           No notifications
         </div>
 
@@ -67,7 +68,6 @@ function connectSSE() {
   es.onerror = () => {
     es?.close();
     es = null;
-    // Reconnect after 10 s on error
     setTimeout(connectSSE, 10000);
   };
 }
@@ -82,3 +82,15 @@ onUnmounted(() => {
   es = null;
 });
 </script>
+
+<style scoped>
+.notif-bell-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px !important;
+}
+
+.notif-bell-btn:hover {
+  background: var(--stu-gray-50) !important;
+}
+</style>
