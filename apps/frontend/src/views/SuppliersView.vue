@@ -13,6 +13,7 @@
       :loading="loading"
       flat bordered
       :rows-per-page-options="[]"
+      :pagination="{ rowsPerPage: 0 }"
       hide-bottom
     >
       <template #body-cell-actions="{ row }">

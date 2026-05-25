@@ -63,6 +63,7 @@
       :loading="store.loading"
       flat bordered
       :rows-per-page-options="[]"
+      :pagination="{ rowsPerPage: 0 }"
       hide-bottom
     >
       <template #body-cell-type="{ value }">
@@ -82,7 +83,7 @@
 
     <div class="row justify-center q-mt-md">
       <q-pagination
-        v-model="store.page"
+        v-model="movPage"
         :max="Math.ceil(store.total / store.limit) || 1"
         :max-pages="7"
         boundary-numbers
@@ -97,6 +98,7 @@
 <script setup lang="ts">
 import { computed, watch, onMounted, ref } from 'vue';
 import { QInput } from 'quasar';
+import { storeToRefs } from 'pinia';
 import { useMovementsStore } from '@/stores/movements';
 import { useAuthStore } from '@/stores/auth';
 import { listProducts } from '@/api/products.api';
@@ -106,6 +108,7 @@ import type { StockMovement } from '@/api/stockMovements.api';
 import type { Product } from '@/api/products.api';
 
 const store = useMovementsStore();
+const { page: movPage } = storeToRefs(store);
 const authStore = useAuthStore();
 const showForm = ref(false);
 const productOptions = ref<Product[]>([]);
@@ -143,6 +146,6 @@ function onFilterChange() {
   store.fetchMovements();
 }
 
-watch(() => store.page, () => store.fetchMovements());
+watch(movPage, () => store.fetchMovements());
 onMounted(() => store.fetchMovements());
 </script>
