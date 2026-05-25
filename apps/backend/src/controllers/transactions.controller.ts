@@ -111,7 +111,7 @@ export async function listTransactions(req: AuthRequest, res: Response, next: Ne
     if (dateFrom || dateTo) {
       where.createdAt = {
         ...(dateFrom && { gte: new Date(dateFrom) }),
-        ...(dateTo && { lte: new Date(dateTo) }),
+        ...(dateTo && { lt: new Date(new Date(dateTo).getTime() + 86400000) }),
       };
     }
 
