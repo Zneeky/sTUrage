@@ -205,75 +205,70 @@ async function main() {
   await upsertStockItem(fireExtinguisher.id, mainWarehouse.id, 1);   // minStock=4  → LOW_STOCK
 
   // ── Stock Movements (history) ────────────────────────────
+  // Dates spread across Feb–May 2026 so date filters have data in every range
+  const d = (iso: string) => new Date(iso);
+
   const movements: Prisma.StockMovementCreateManyInput[] = [
-    // Initial inbound for electronics
-    { type: MovementType.INBOUND, quantity: 25, productId: laptop.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
-    { type: MovementType.INBOUND, quantity: 10, productId: laptop.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock — annex' },
-    { type: MovementType.INBOUND, quantity: 20, productId: monitor.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
-    { type: MovementType.INBOUND, quantity: 8, productId: monitor.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock — annex' },
-    { type: MovementType.INBOUND, quantity: 40, productId: keyboard.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Bulk keyboard order' },
-    { type: MovementType.INBOUND, quantity: 40, productId: mouse.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Bulk mouse order' },
-    { type: MovementType.INBOUND, quantity: 5, productId: networkSwitch.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Network upgrade batch' },
-    { type: MovementType.INBOUND, quantity: 4, productId: projector.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Conference room equipment' },
+    // ── February 2026: initial stock intake ──────────────────
+    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 25, productId: laptop.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
+    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 10, productId: laptop.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock — annex' },
+    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 20, productId: monitor.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
+    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 8, productId: monitor.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock — annex' },
+    { createdAt: d('2026-02-05'), type: MovementType.INBOUND, quantity: 40, productId: keyboard.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Bulk keyboard order' },
+    { createdAt: d('2026-02-05'), type: MovementType.INBOUND, quantity: 40, productId: mouse.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Bulk mouse order' },
+    { createdAt: d('2026-02-10'), type: MovementType.INBOUND, quantity: 5, productId: networkSwitch.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Network upgrade batch' },
+    { createdAt: d('2026-02-10'), type: MovementType.INBOUND, quantity: 4, productId: projector.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Conference room equipment' },
+    { createdAt: d('2026-02-12'), type: MovementType.INBOUND, quantity: 20, productId: chair.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
+    { createdAt: d('2026-02-12'), type: MovementType.INBOUND, quantity: 10, productId: desk.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Standing desk pilot program' },
+    { createdAt: d('2026-02-14'), type: MovementType.INBOUND, quantity: 6, productId: cabinet.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Archive room upgrade' },
+    { createdAt: d('2026-02-14'), type: MovementType.INBOUND, quantity: 15, productId: shelf.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Warehouse shelving expansion' },
+    { createdAt: d('2026-02-20'), type: MovementType.INBOUND, quantity: 200, productId: paper.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Quarterly paper order' },
+    { createdAt: d('2026-02-20'), type: MovementType.INBOUND, quantity: 50, productId: pens.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Annual stationery order' },
+    { createdAt: d('2026-02-20'), type: MovementType.INBOUND, quantity: 30, productId: markers.id, targetWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Whiteboard supply restock' },
+    { createdAt: d('2026-02-20'), type: MovementType.INBOUND, quantity: 80, productId: stickyNotes.id, targetWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Annual stationery order' },
 
-    // Outbound electronics
-    { type: MovementType.OUTBOUND, quantity: 3, productId: laptop.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to CS department' },
-    { type: MovementType.OUTBOUND, quantity: 2, productId: laptop.id, sourceWarehouseId: annexWarehouse.id, createdById: operator2.id, note: 'Issued to admin office' },
-    { type: MovementType.OUTBOUND, quantity: 5, productId: monitor.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to labs' },
-    { type: MovementType.OUTBOUND, quantity: 2, productId: monitor.id, sourceWarehouseId: annexWarehouse.id, createdById: operator2.id, note: 'Issued to rector office' },
-    { type: MovementType.OUTBOUND, quantity: 10, productId: keyboard.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Computer lab refresh' },
-    { type: MovementType.OUTBOUND, quantity: 12, productId: mouse.id, sourceWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Computer lab refresh' },
-    { type: MovementType.OUTBOUND, quantity: 1, productId: networkSwitch.id, sourceWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Installed in server room' },
+    // ── March 2026: semester starts, first outbounds ─────────
+    { createdAt: d('2026-03-03'), type: MovementType.OUTBOUND, quantity: 3, productId: laptop.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to CS department' },
+    { createdAt: d('2026-03-03'), type: MovementType.OUTBOUND, quantity: 2, productId: laptop.id, sourceWarehouseId: annexWarehouse.id, createdById: operator2.id, note: 'Issued to admin office' },
+    { createdAt: d('2026-03-05'), type: MovementType.OUTBOUND, quantity: 5, productId: monitor.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to labs' },
+    { createdAt: d('2026-03-05'), type: MovementType.OUTBOUND, quantity: 2, productId: monitor.id, sourceWarehouseId: annexWarehouse.id, createdById: operator2.id, note: 'Issued to rector office' },
+    { createdAt: d('2026-03-10'), type: MovementType.OUTBOUND, quantity: 10, productId: keyboard.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Computer lab refresh' },
+    { createdAt: d('2026-03-10'), type: MovementType.OUTBOUND, quantity: 12, productId: mouse.id, sourceWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Computer lab refresh' },
+    { createdAt: d('2026-03-12'), type: MovementType.OUTBOUND, quantity: 1, productId: networkSwitch.id, sourceWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Installed in server room' },
+    { createdAt: d('2026-03-14'), type: MovementType.OUTBOUND, quantity: 3, productId: desk.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to faculty offices' },
+    { createdAt: d('2026-03-14'), type: MovementType.OUTBOUND, quantity: 2, productId: cabinet.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to admin wing' },
+    { createdAt: d('2026-03-17'), type: MovementType.OUTBOUND, quantity: 60, productId: paper.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Print room monthly allocation' },
+    { createdAt: d('2026-03-17'), type: MovementType.OUTBOUND, quantity: 15, productId: pens.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Department distribution' },
+    { createdAt: d('2026-03-20'), type: MovementType.INBOUND, quantity: 5, productId: microscope.id, targetWarehouseId: labStorage.id, createdById: manager2.id, note: 'Lab equipment procurement' },
+    { createdAt: d('2026-03-20'), type: MovementType.INBOUND, quantity: 60, productId: labGloves.id, targetWarehouseId: labStorage.id, createdById: operator2.id, note: 'Lab consumables restock' },
+    { createdAt: d('2026-03-20'), type: MovementType.INBOUND, quantity: 20, productId: safetyGoggles.id, targetWarehouseId: labStorage.id, createdById: operator2.id, note: 'PPE for lab students' },
+    { createdAt: d('2026-03-25'), type: MovementType.TRANSFER, quantity: 5, productId: chair.id, sourceWarehouseId: mainWarehouse.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Rebalancing stock between buildings' },
+    { createdAt: d('2026-03-25'), type: MovementType.TRANSFER, quantity: 5, productId: shelf.id, sourceWarehouseId: mainWarehouse.id, targetWarehouseId: externalUnit.id, createdById: manager2.id, note: 'External unit setup' },
 
-    // Transfer between warehouses
-    { type: MovementType.TRANSFER, quantity: 5, productId: chair.id, sourceWarehouseId: mainWarehouse.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Rebalancing stock between buildings' },
-    { type: MovementType.TRANSFER, quantity: 20, productId: paper.id, sourceWarehouseId: mainWarehouse.id, targetWarehouseId: annexWarehouse.id, createdById: operator.id, note: 'Paper transferred for secretariat' },
-    { type: MovementType.TRANSFER, quantity: 5, productId: shelf.id, sourceWarehouseId: mainWarehouse.id, targetWarehouseId: externalUnit.id, createdById: manager2.id, note: 'External unit setup' },
+    // ── April 2026: mid-semester, lab and safety activity ────
+    { createdAt: d('2026-04-01'), type: MovementType.OUTBOUND, quantity: 8, productId: markers.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to lecture halls' },
+    { createdAt: d('2026-04-01'), type: MovementType.OUTBOUND, quantity: 30, productId: stickyNotes.id, sourceWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Department distribution' },
+    { createdAt: d('2026-04-03'), type: MovementType.OUTBOUND, quantity: 2, productId: microscope.id, sourceWarehouseId: labStorage.id, createdById: manager2.id, note: 'Issued to biology lab' },
+    { createdAt: d('2026-04-03'), type: MovementType.OUTBOUND, quantity: 20, productId: labGloves.id, sourceWarehouseId: labStorage.id, createdById: operator2.id, note: 'Lab semester allocation' },
+    { createdAt: d('2026-04-05'), type: MovementType.OUTBOUND, quantity: 2, productId: safetyGoggles.id, sourceWarehouseId: labStorage.id, createdById: operator2.id, note: 'Issued to chemistry lab' },
+    { createdAt: d('2026-04-07'), type: MovementType.INBOUND, quantity: 50, productId: cleaningSolution.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Cleaning supplies order' },
+    { createdAt: d('2026-04-07'), type: MovementType.INBOUND, quantity: 8, productId: mopSet.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Janitorial restock' },
+    { createdAt: d('2026-04-10'), type: MovementType.INBOUND, quantity: 20, productId: hardHat.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Safety compliance order' },
+    { createdAt: d('2026-04-10'), type: MovementType.INBOUND, quantity: 25, productId: safetyVest.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Safety compliance order' },
+    { createdAt: d('2026-04-10'), type: MovementType.INBOUND, quantity: 6, productId: fireExtinguisher.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Annual fire safety restock' },
+    { createdAt: d('2026-04-15'), type: MovementType.TRANSFER, quantity: 20, productId: paper.id, sourceWarehouseId: mainWarehouse.id, targetWarehouseId: annexWarehouse.id, createdById: operator.id, note: 'Paper transferred for secretariat' },
+    { createdAt: d('2026-04-22'), type: MovementType.OUTBOUND, quantity: 38, productId: cleaningSolution.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Distributed to cleaning staff' },
+    { createdAt: d('2026-04-22'), type: MovementType.OUTBOUND, quantity: 6, productId: mopSet.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to facilities team' },
+    { createdAt: d('2026-04-28'), type: MovementType.OUTBOUND, quantity: 20, productId: hardHat.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Construction site deployment' },
+    { createdAt: d('2026-04-28'), type: MovementType.OUTBOUND, quantity: 22, productId: safetyVest.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to maintenance crews' },
 
-    // Furniture inbound
-    { type: MovementType.INBOUND, quantity: 20, productId: chair.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
-    { type: MovementType.INBOUND, quantity: 10, productId: desk.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Standing desk pilot program' },
-    { type: MovementType.INBOUND, quantity: 6, productId: cabinet.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Archive room upgrade' },
-    { type: MovementType.INBOUND, quantity: 15, productId: shelf.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Warehouse shelving expansion' },
-    { type: MovementType.OUTBOUND, quantity: 3, productId: desk.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to faculty offices' },
-    { type: MovementType.OUTBOUND, quantity: 2, productId: cabinet.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to admin wing' },
-
-    // Office supplies
-    { type: MovementType.INBOUND, quantity: 200, productId: paper.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Quarterly paper order' },
-    { type: MovementType.INBOUND, quantity: 50, productId: pens.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Annual stationery order' },
-    { type: MovementType.INBOUND, quantity: 30, productId: markers.id, targetWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Whiteboard supply restock' },
-    { type: MovementType.INBOUND, quantity: 80, productId: stickyNotes.id, targetWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Annual stationery order' },
-    { type: MovementType.OUTBOUND, quantity: 60, productId: paper.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Print room monthly allocation' },
-    { type: MovementType.OUTBOUND, quantity: 15, productId: pens.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Department distribution' },
-    { type: MovementType.OUTBOUND, quantity: 8, productId: markers.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to lecture halls' },
-    { type: MovementType.OUTBOUND, quantity: 30, productId: stickyNotes.id, sourceWarehouseId: mainWarehouse.id, createdById: operator2.id, note: 'Department distribution' },
-
-    // Lab equipment
-    { type: MovementType.INBOUND, quantity: 5, productId: microscope.id, targetWarehouseId: labStorage.id, createdById: manager2.id, note: 'Lab equipment procurement' },
-    { type: MovementType.INBOUND, quantity: 60, productId: labGloves.id, targetWarehouseId: labStorage.id, createdById: operator2.id, note: 'Lab consumables restock' },
-    { type: MovementType.INBOUND, quantity: 20, productId: safetyGoggles.id, targetWarehouseId: labStorage.id, createdById: operator2.id, note: 'PPE for lab students' },
-    { type: MovementType.OUTBOUND, quantity: 2, productId: microscope.id, sourceWarehouseId: labStorage.id, createdById: manager2.id, note: 'Issued to biology lab' },
-    { type: MovementType.OUTBOUND, quantity: 20, productId: labGloves.id, sourceWarehouseId: labStorage.id, createdById: operator2.id, note: 'Lab semester allocation' },
-    { type: MovementType.OUTBOUND, quantity: 2, productId: safetyGoggles.id, sourceWarehouseId: labStorage.id, createdById: operator2.id, note: 'Issued to chemistry lab' },
-
-    // Cleaning supplies (now low stock)
-    { type: MovementType.INBOUND, quantity: 50, productId: cleaningSolution.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Cleaning supplies order' },
-    { type: MovementType.INBOUND, quantity: 8, productId: mopSet.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Janitorial restock' },
-    { type: MovementType.OUTBOUND, quantity: 38, productId: cleaningSolution.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Distributed to cleaning staff' },
-    { type: MovementType.OUTBOUND, quantity: 6, productId: mopSet.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to facilities team' },
-
-    // Safety equipment (now low/out of stock)
-    { type: MovementType.INBOUND, quantity: 20, productId: hardHat.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Safety compliance order' },
-    { type: MovementType.INBOUND, quantity: 25, productId: safetyVest.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Safety compliance order' },
-    { type: MovementType.INBOUND, quantity: 6, productId: fireExtinguisher.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Annual fire safety restock' },
-    { type: MovementType.OUTBOUND, quantity: 20, productId: hardHat.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Construction site deployment' },
-    { type: MovementType.OUTBOUND, quantity: 22, productId: safetyVest.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Issued to maintenance crews' },
-    { type: MovementType.OUTBOUND, quantity: 5, productId: fireExtinguisher.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Installed across campus buildings' },
-
-    // Adjustments
-    { type: MovementType.ADJUSTMENT, quantity: 2, productId: keyboard.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Inventory count correction — 2 units found in storage' },
-    { type: MovementType.ADJUSTMENT, quantity: -3, productId: pens.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Shrinkage adjustment after quarterly audit' },
-    { type: MovementType.ADJUSTMENT, quantity: -1, productId: monitor.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Damaged unit written off' },
+    // ── May 2026: recent activity (this month) ───────────────
+    { createdAt: d('2026-05-05'), type: MovementType.OUTBOUND, quantity: 5, productId: fireExtinguisher.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Installed across campus buildings' },
+    { createdAt: d('2026-05-08'), type: MovementType.ADJUSTMENT, quantity: 2, productId: keyboard.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Inventory count correction — 2 units found in storage' },
+    { createdAt: d('2026-05-12'), type: MovementType.ADJUSTMENT, quantity: -3, productId: pens.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Shrinkage adjustment after quarterly audit' },
+    { createdAt: d('2026-05-19'), type: MovementType.ADJUSTMENT, quantity: -1, productId: monitor.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Damaged unit written off' },
+    { createdAt: d('2026-05-22'), type: MovementType.OUTBOUND, quantity: 20, productId: paper.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Print room monthly allocation' },
+    { createdAt: d('2026-05-25'), type: MovementType.INBOUND, quantity: 10, productId: labGloves.id, targetWarehouseId: labStorage.id, createdById: operator2.id, note: 'Emergency lab consumables top-up' },
   ];
 
   await prisma.stockMovement.createMany({ data: movements });
