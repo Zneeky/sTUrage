@@ -74,7 +74,7 @@
             <div class="text-subtitle1 text-weight-medium">Movement History</div>
           </q-card-section>
           <q-card-section class="q-pt-sm">
-            <MovementsTable :movements="movements" :loading="loading" />
+            <MovementsTable :movements="movements" :loading="movLoading" />
             <div class="row justify-center q-mt-sm">
               <q-pagination
                 v-model="movPage"
@@ -116,6 +116,7 @@ const authStore = useAuthStore();
 const product = ref<Product | null>(null);
 const movements = ref<StockMovement[]>([]);
 const loading = ref(false);
+const movLoading = ref(false);
 const showEdit = ref(false);
 const showMovement = ref(false);
 const movPage = ref(1);
@@ -140,10 +141,15 @@ const totalStock = computed(() =>
 );
 
 async function loadMovements() {
-  const id = route.params.id as string;
-  const res = await listMovements({ productId: id, page: movPage.value, limit: movLimit });
-  movements.value = res.data;
-  movTotal.value = res.total;
+  movLoading.value = true;
+  try {
+    const id = route.params.id as string;
+    const res = await listMovements({ productId: id, page: movPage.value, limit: movLimit });
+    movements.value = res.data;
+    movTotal.value = res.total;
+  } finally {
+    movLoading.value = false;
+  }
 }
 
 async function loadProduct() {
