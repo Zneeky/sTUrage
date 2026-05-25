@@ -1,55 +1,159 @@
+/* ─── CSS Variables ─────────────────────────────────────────── */
 :root {
-  --stu-sidebar-width: 240px;
-  --stu-header-height: 56px;
-  --stu-bg: #F4F6FA;
+  --stu-sidebar-width: 260px;
+  --stu-header-height: 64px;
+  --stu-bg: #F8FAFC;
   --stu-surface: #FFFFFF;
+  --stu-primary: #3B82F6;
+  --stu-primary-50: #EFF6FF;
+  --stu-primary-100: #DBEAFE;
+  --stu-primary-600: #2563EB;
+  --stu-primary-700: #1D4ED8;
+  --stu-gray-50: #F9FAFB;
+  --stu-gray-100: #F3F4F6;
+  --stu-gray-200: #E5E7EB;
+  --stu-gray-300: #D1D5DB;
+  --stu-gray-400: #9CA3AF;
+  --stu-gray-500: #6B7280;
+  --stu-gray-600: #4B5563;
+  --stu-gray-700: #374151;
+  --stu-gray-800: #1F2937;
+  --stu-gray-900: #111827;
+  --stu-success: #10B981;
+  --stu-success-light: #ECFDF5;
+  --stu-warning: #F59E0B;
+  --stu-warning-light: #FFFBEB;
+  --stu-danger: #EF4444;
+  --stu-danger-light: #FEF2F2;
+  --stu-info: #8B5CF6;
+  --stu-info-light: #F5F3FF;
+  --stu-radius: 12px;
+  --stu-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --stu-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
 }
 
+/* ─── Base ──────────────────────────────────────────────────── */
 body {
+  font-family: 'DM Sans', system-ui, sans-serif;
   background: var(--stu-bg);
+  -webkit-font-smoothing: antialiased;
+  color: var(--stu-gray-700);
 }
 
+/* ─── Page ──────────────────────────────────────────────────── */
 .q-page {
-  padding: 24px;
+  padding: 28px 32px;
 }
 
 .page-title {
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 700;
   margin-bottom: 20px;
-  color: #212121;
+  color: var(--stu-gray-900);
 }
 
+/* ─── Filter bar ────────────────────────────────────────────── */
 .filter-bar {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   align-items: flex-end;
 }
 
-/* Sidebar — applied via content-class so it targets Quasar's inner panel */
+/* ─── Sidebar ───────────────────────────────────────────────── */
 .sidebar {
-  background: #1A2035 !important;
-  color: white;
+  background: #ffffff !important;
+  border-right: 1px solid var(--stu-gray-200) !important;
+  color: var(--stu-gray-700);
   display: flex;
   flex-direction: column;
 }
 
 .sidebar .nav-item {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--stu-gray-500) !important;
+  border-radius: 8px;
+  margin: 2px 8px;
 }
 
-.sidebar .nav-item .q-icon,
-.sidebar .nav-item .q-item__section {
-  color: rgba(255, 255, 255, 0.75);
+.sidebar .nav-item .q-icon {
+  color: var(--stu-gray-500) !important;
+}
+
+.sidebar .nav-item .q-item__section--main {
+  color: var(--stu-gray-500) !important;
+}
+
+.sidebar .nav-item:hover {
+  background: var(--stu-gray-50) !important;
+}
+
+.sidebar .nav-item:hover .q-icon,
+.sidebar .nav-item:hover .q-item__section--main {
+  color: var(--stu-gray-700) !important;
 }
 
 .sidebar .nav-item--active {
-  background: #1565C0 !important;
+  background: var(--stu-primary-50) !important;
+  font-weight: 600;
 }
 
 .sidebar .nav-item--active .q-icon,
-.sidebar .nav-item--active .q-item__section {
-  color: white !important;
+.sidebar .nav-item--active .q-item__section--main {
+  color: var(--stu-primary) !important;
+}
+
+/* ─── Header ────────────────────────────────────────────────── */
+.q-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid var(--stu-gray-100) !important;
+  color: var(--stu-gray-900) !important;
+}
+
+.q-header .q-toolbar__title {
+  color: var(--stu-gray-900) !important;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+/* ─── Cards ─────────────────────────────────────────────────── */
+.q-card {
+  border-radius: var(--stu-radius) !important;
+  box-shadow: var(--stu-shadow-sm) !important;
+  border: none !important;
+  background: #ffffff;
+}
+
+.q-card--flat.q-card--bordered {
+  box-shadow: var(--stu-shadow-sm) !important;
+  border: none !important;
+}
+
+.q-card--flat {
+  box-shadow: var(--stu-shadow-sm) !important;
+}
+
+/* ─── Soft Badge classes ────────────────────────────────────── */
+.badge-soft {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+
+.badge-soft--green  { background: var(--stu-success-light); color: #065F46; }
+.badge-soft--amber  { background: var(--stu-warning-light); color: #92400E; }
+.badge-soft--red    { background: var(--stu-danger-light);  color: #991B1B; }
+.badge-soft--blue   { background: var(--stu-primary-50);    color: var(--stu-primary-700); }
+.badge-soft--purple { background: var(--stu-info-light);    color: #5B21B6; }
+.badge-soft--gray   { background: var(--stu-gray-100);      color: var(--stu-gray-600); }
+
+/* ─── Responsive ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .q-page { padding: 20px 16px; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
 }

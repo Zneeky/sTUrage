@@ -2,13 +2,14 @@
   <q-drawer
     v-model="open"
     show-if-above
-    :width="240"
+    :width="260"
     :breakpoint="600"
-    bordered
     content-class="sidebar"
   >
     <div class="sidebar-header">
-      <q-icon name="warehouse" size="28px" color="white" />
+      <div class="sidebar-logo">
+        <q-icon name="warehouse" size="22px" color="white" />
+      </div>
       <span class="sidebar-title">STURage</span>
     </div>
 
@@ -24,7 +25,7 @@
           class="nav-item"
         >
           <q-item-section avatar>
-            <q-icon :name="item.icon" />
+            <q-icon :name="item.icon" size="20px" />
           </q-item-section>
           <q-item-section>{{ item.label }}</q-item-section>
         </q-item>
@@ -32,26 +33,18 @@
     </q-list>
 
     <div class="sidebar-footer">
-      <q-chip
-        :label="authStore.user?.role ?? ''"
-        color="primary"
-        text-color="white"
-        size="sm"
-        class="q-mb-xs"
-      />
-      <div class="sidebar-user-name">
-        {{ authStore.user?.firstName }} {{ authStore.user?.lastName }}
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">
+          {{ initials }}
+        </div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name">{{ authStore.user?.firstName }} {{ authStore.user?.lastName }}</div>
+          <div class="sidebar-user-role">{{ authStore.user?.role }}</div>
+        </div>
       </div>
-      <q-btn
-        flat
-        dense
-        icon="logout"
-        label="Logout"
-        color="white"
-        size="sm"
-        class="q-mt-xs"
-        @click="handleLogout"
-      />
+      <button class="sidebar-logout-btn" title="Logout" @click="handleLogout">
+        <q-icon name="logout" size="18px" />
+      </button>
     </div>
   </q-drawer>
 </template>
@@ -75,11 +68,18 @@ const authStore = useAuthStore();
 const router = useRouter();
 const isAdmin = computed(() => authStore.user?.role === 'ADMIN');
 
+const initials = computed(() => {
+  const f = authStore.user?.firstName?.[0] ?? '';
+  const l = authStore.user?.lastName?.[0] ?? '';
+  return (f + l).toUpperCase() || 'U';
+});
+
 const navItems = [
   { label: 'Dashboard',       icon: 'dashboard',        to: '/dashboard' },
   { label: 'Products',        icon: 'inventory_2',       to: '/products' },
   { label: 'Categories',      icon: 'category',          to: '/categories' },
   { label: 'Suppliers',       icon: 'local_shipping',    to: '/suppliers' },
+  { label: 'Warehouses',      icon: 'warehouse',          to: '/warehouses' },
   { label: 'Stock Movements', icon: 'swap_horiz',        to: '/stock-movements' },
   { label: 'Reports',         icon: 'bar_chart',         to: '/reports' },
   { label: 'Users',           icon: 'manage_accounts',   to: '/users', adminOnly: true },
@@ -95,44 +95,113 @@ async function handleLogout() {
 .sidebar-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  height: 56px;
+  gap: 12px;
+  padding: 20px 20px 16px;
+}
+
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--stu-primary);
+  flex-shrink: 0;
 }
 
 .sidebar-title {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: white;
-  letter-spacing: 0.5px;
+  color: var(--stu-gray-800);
+  letter-spacing: 0.3px;
 }
 
 .nav-list {
   flex: 1;
+  padding: 8px 12px;
 }
 
 .nav-item {
-  border-radius: 6px;
-  margin: 2px 8px;
+  border-radius: 8px;
+  margin: 2px 0;
   min-height: 44px;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .nav-item--active {
-  background: #1565C0 !important;
+  background: var(--stu-primary-50) !important;
+  font-weight: 600;
 }
 
 .sidebar-footer {
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-top: 1px solid var(--stu-gray-100);
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--stu-primary-50);
+  color: var(--stu-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.sidebar-user-info {
+  min-width: 0;
 }
 
 .sidebar-user-name {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 500;
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--stu-gray-800);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-role {
+  font-size: 0.675rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  color: var(--stu-gray-400);
+}
+
+.sidebar-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--stu-gray-400);
+  transition: all 0.15s;
+}
+
+.sidebar-logout-btn:hover {
+  background: var(--stu-gray-100);
+  color: var(--stu-gray-600);
 }
 </style>
