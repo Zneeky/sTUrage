@@ -150,8 +150,24 @@ function confirmDeactivate(user: User) {
   });
 }
 
-watch(() => store.usersPage, () => store.fetchUsers());
-watch(() => store.auditPage, () => store.fetchAuditLog());
-watch(activeTab, (tab) => { if (tab === 'auditlog' && !store.auditLog.length) store.fetchAuditLog(); });
-onMounted(() => store.fetchUsers());
+function handleFetchError(err: unknown) {
+  const status = (err as { response?: { status?: number } }).response?.status;
+  const message = status === 429
+    ? 'Too many requests — please wait a moment before refreshing'
+    : 'Failed to load data';
+  $q.notify({ type: 'warning', message, timeout: 4000 });
+}
+
+async function loadUsers() {
+  try { await store.fetchUsers(); } catch (err) { handleFetchError(err); }
+}
+
+async function loadAuditLog() {
+  try { await store.fetchAuditLog(); } catch (err) { handleFetchError(err); }
+}
+
+watch(() => store.usersPage, loadUsers);
+watch(() => store.auditPage, loadAuditLog);
+watch(activeTab, (tab) => { if (tab === 'auditlog' && !store.auditLog.length) loadAuditLog(); });
+onMounted(loadUsers);
 </script>
