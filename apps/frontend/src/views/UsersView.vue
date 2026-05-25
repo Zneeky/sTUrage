@@ -1,6 +1,10 @@
 <template>
   <q-page>
-    <div class="page-title">User Management</div>
+    <div class="row items-center q-mb-md">
+      <div class="page-title q-mb-none">User Management</div>
+      <q-space />
+      <q-btn v-if="canAdmin" label="Add User" icon="person_add" color="primary" unelevated @click="openForm(null)" />
+    </div>
 
     <q-tabs v-model="activeTab" align="left" color="primary" class="q-mb-md">
       <q-tab name="users"    label="Users"     icon="manage_accounts" />
@@ -10,10 +14,6 @@
     <q-tab-panels v-model="activeTab" animated>
       <!-- Users tab -->
       <q-tab-panel name="users" class="q-pa-none">
-        <div v-if="canAdmin" class="row justify-end q-mb-md">
-          <q-btn label="Add User" icon="person_add" color="primary" unelevated @click="openForm(null)" />
-        </div>
-
         <q-table
           :rows="store.users"
           :columns="userColumns"
