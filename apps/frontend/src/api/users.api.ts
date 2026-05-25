@@ -63,6 +63,11 @@ export async function deactivateUser(id: string): Promise<User> {
   return res.data.data;
 }
 
+export async function activateUser(id: string): Promise<User> {
+  const res = await client.patch(`/users/${id}/activate`);
+  return res.data.data;
+}
+
 export async function listAuditLog(params?: { page?: number; limit?: number }): Promise<{ data: AuditEntry[]; total: number }> {
   const res = await client.get('/users/audit-log', { params });
   return { data: res.data.data, total: res.data.total };

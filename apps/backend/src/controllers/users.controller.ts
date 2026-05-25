@@ -85,6 +85,13 @@ export async function deactivateUser(req: AuthRequest, res: Response, next: Next
   } catch (err) { next(err); }
 }
 
+export async function activateUser(req: AuthRequest, res: Response, next: NextFunction) {
+  try {
+    const user = await prisma.user.update({ where: { id: req.params.id }, data: { isActive: true }, select: userSelect });
+    res.json({ data: user });
+  } catch (err) { next(err); }
+}
+
 export async function listAuditLogs(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);

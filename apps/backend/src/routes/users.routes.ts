@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticate, authorize } from '../middleware/auth';
 import { auditLog } from '../middleware/audit.middleware';
-import { listUsers, getUser, createUser, updateUser, deactivateUser, listAuditLogs } from '../controllers/users.controller';
+import { listUsers, getUser, createUser, updateUser, deactivateUser, activateUser, listAuditLogs } from '../controllers/users.controller';
 
 const router = Router();
 
@@ -11,5 +11,6 @@ router.get('/:id', authenticate, authorize('ADMIN'), getUser);
 router.post('/', authenticate, authorize('ADMIN'), auditLog, createUser);
 router.put('/:id', authenticate, authorize('ADMIN'), auditLog, updateUser);
 router.patch('/:id/deactivate', authenticate, authorize('ADMIN'), auditLog, deactivateUser);
+router.patch('/:id/activate',   authenticate, authorize('ADMIN'), auditLog, activateUser);
 
 export default router;
