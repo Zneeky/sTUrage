@@ -1,4 +1,4 @@
-import { PrismaClient, Role, MovementType, NotificationType } from '@prisma/client';
+import { PrismaClient, Role, MovementType, NotificationType, Prisma } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -204,7 +204,7 @@ async function main() {
   await upsertStockItem(fireExtinguisher.id, mainWarehouse.id, 1);   // minStock=4  → LOW_STOCK
 
   // ── Stock Movements (history) ────────────────────────────
-  const movements: Parameters<typeof prisma.stockMovement.createMany>[0]['data'] = [
+  const movements: Prisma.StockMovementCreateManyInput[] = [
     // Initial inbound for electronics
     { type: MovementType.INBOUND, quantity: 25, productId: laptop.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
     { type: MovementType.INBOUND, quantity: 10, productId: laptop.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock — annex' },
