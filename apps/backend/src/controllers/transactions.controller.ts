@@ -101,13 +101,14 @@ export async function listTransactions(req: AuthRequest, res: Response, next: Ne
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(100, parseInt(req.query.limit as string) || 20);
     const productId = req.query.productId as string | undefined;
-    const type = req.query.type as string | undefined;
+    const typeParam = req.query.type as string | undefined;
+    const types = typeParam ? typeParam.split(',').filter(Boolean) : [];
     const dateFrom = req.query.dateFrom as string | undefined;
     const dateTo = req.query.dateTo as string | undefined;
 
     const where: Record<string, unknown> = {};
     if (productId) where.productId = productId;
-    if (type) where.type = type;
+    if (types.length > 0) where.type = types.length === 1 ? types[0] : { in: types };
     if (dateFrom || dateTo) {
       where.createdAt = {
         ...(dateFrom && { gte: new Date(dateFrom) }),
