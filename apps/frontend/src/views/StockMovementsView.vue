@@ -19,6 +19,7 @@
         :options="typeOptions"
         label="Type"
         outlined dense multiple clearable
+        bottom-slots
         style="min-width: 200px;"
         @update:model-value="onFilterChange"
       />
@@ -30,6 +31,7 @@
         use-input clearable
         label="Product"
         outlined dense
+        bottom-slots
         style="min-width: 200px;"
         @filter="filterProducts"
         @update:model-value="onFilterChange"
@@ -38,16 +40,18 @@
         v-model="store.filterDateFrom"
         label="From"
         type="date"
-        outlined dense
+        outlined dense bottom-slots
         style="min-width: 160px;"
-        @update:model-value="onFilterChange"
+        @update:model-value="onDateFromChange"
       />
       <q-input
+        ref="dateToInput"
         v-model="store.filterDateTo"
         label="To"
         type="date"
-        outlined dense
+        outlined dense bottom-slots
         style="min-width: 160px;"
+        :rules="[v => !v || !store.filterDateFrom || v >= store.filterDateFrom || 'Must be on or after From date']"
         @update:model-value="onFilterChange"
       />
     </div>
@@ -59,6 +63,7 @@
       :loading="store.loading"
       flat bordered
       :rows-per-page-options="[]"
+      :pagination="{ rowsPerPage: 0 }"
       hide-bottom
     >
       <template #body-cell-type="{ value }">
@@ -78,7 +83,7 @@
 
     <div class="row justify-center q-mt-md">
       <q-pagination
-        v-model="store.page"
+        v-model="movPage"
         :max="Math.ceil(store.total / store.limit) || 1"
         :max-pages="7"
         boundary-numbers
@@ -92,6 +97,8 @@
 
 <script setup lang="ts">
 import { computed, watch, onMounted, ref } from 'vue';
+import { QInput } from 'quasar';
+import { storeToRefs } from 'pinia';
 import { useMovementsStore } from '@/stores/movements';
 import { useAuthStore } from '@/stores/auth';
 import { listProducts } from '@/api/products.api';
@@ -101,9 +108,11 @@ import type { StockMovement } from '@/api/stockMovements.api';
 import type { Product } from '@/api/products.api';
 
 const store = useMovementsStore();
+const { page: movPage } = storeToRefs(store);
 const authStore = useAuthStore();
 const showForm = ref(false);
 const productOptions = ref<Product[]>([]);
+const dateToInput = ref<InstanceType<typeof QInput> | null>(null);
 const canMove = computed(() => ['ADMIN', 'MANAGER', 'OPERATOR'].includes(authStore.user?.role ?? ''));
 
 const typeOptions = ['INBOUND', 'OUTBOUND', 'TRANSFER', 'ADJUSTMENT'];
@@ -125,11 +134,18 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
+function onDateFromChange() {
+  dateToInput.value?.validate();
+  onFilterChange();
+}
+
 function onFilterChange() {
+  const dateRangeInvalid = !!(store.filterDateFrom && store.filterDateTo && store.filterDateFrom > store.filterDateTo);
+  if (dateRangeInvalid) return;
   store.resetPage();
   store.fetchMovements();
 }
 
-watch(() => store.page, () => store.fetchMovements());
+watch(movPage, () => store.fetchMovements());
 onMounted(() => store.fetchMovements());
 </script>

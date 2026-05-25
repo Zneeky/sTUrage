@@ -59,6 +59,11 @@ const router = createRouter({
       meta: { layout: 'AppLayout' },
     },
     {
+      path: '/warehouses',
+      component: () => import('@/views/WarehousesView.vue'),
+      meta: { layout: 'AppLayout' },
+    },
+    {
       path: '/users',
       component: () => import('@/views/UsersView.vue'),
       meta: { layout: 'AppLayout', adminOnly: true },

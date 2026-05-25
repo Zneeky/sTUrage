@@ -1,63 +1,55 @@
 <template>
-  <q-card class="login-card" flat>
-    <q-card-section class="login-header">
-      <q-icon name="warehouse" size="40px" color="primary" />
-      <div class="login-brand">STURage</div>
-      <div class="login-subtitle">Warehouse Inventory Management</div>
-    </q-card-section>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo">
+        <q-icon name="warehouse" size="26px" color="white" />
+      </div>
+      <div class="login-app-name">STURage</div>
+      <div class="login-tagline">Warehouse Inventory Management</div>
+    </div>
 
-    <q-card-section>
-      <q-banner
-        v-if="errorMsg"
-        class="q-mb-md"
-        rounded
+    <div
+      v-if="errorMsg"
+      class="login-error"
+    >
+      <q-icon name="error" size="16px" />
+      {{ errorMsg }}
+    </div>
+
+    <q-form @submit="handleLogin" class="login-form">
+      <q-input
+        v-model="email"
+        label="Email"
+        type="email"
+        outlined
         dense
-        :class="errorMsg.includes('many') ? 'bg-warning text-white' : 'bg-negative text-white'"
+        :rules="[val => !!val || 'Email is required']"
+        autocomplete="email"
+      />
+      <q-input
+        v-model="password"
+        label="Password"
+        :type="showPwd ? 'text' : 'password'"
+        outlined
+        dense
+        :rules="[val => !!val || 'Password is required']"
+        autocomplete="current-password"
       >
-        <template #avatar><q-icon name="error" /></template>
-        {{ errorMsg }}
-      </q-banner>
+        <template #append>
+          <q-icon
+            :name="showPwd ? 'visibility_off' : 'visibility'"
+            class="cursor-pointer"
+            style="color: var(--stu-gray-400);"
+            @click="showPwd = !showPwd"
+          />
+        </template>
+      </q-input>
 
-      <q-form @submit="handleLogin" class="q-gutter-md">
-        <q-input
-          v-model="email"
-          label="Email"
-          type="email"
-          outlined
-          dense
-          :rules="[val => !!val || 'Email is required']"
-          autocomplete="email"
-        />
-        <q-input
-          v-model="password"
-          label="Password"
-          :type="showPwd ? 'text' : 'password'"
-          outlined
-          dense
-          :rules="[val => !!val || 'Password is required']"
-          autocomplete="current-password"
-        >
-          <template #append>
-            <q-icon
-              :name="showPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="showPwd = !showPwd"
-            />
-          </template>
-        </q-input>
-
-        <q-btn
-          type="submit"
-          label="Log In"
-          color="primary"
-          class="full-width"
-          size="md"
-          :loading="loading"
-          unelevated
-        />
-      </q-form>
-    </q-card-section>
-  </q-card>
+      <button type="submit" class="login-submit" :disabled="loading">
+        {{ loading ? 'Signing in…' : 'Sign In' }}
+      </button>
+    </q-form>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -98,24 +90,93 @@ async function handleLogin() {
 .login-card {
   width: 100%;
   max-width: 400px;
-  border-radius: 12px;
-}
-
-.login-header {
-  text-align: center;
-  padding-bottom: 8px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  padding: 40px;
 }
 
 .login-brand {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #1565C0;
-  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
 }
 
-.login-subtitle {
+.login-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--stu-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.login-app-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--stu-gray-900);
+}
+
+.login-tagline {
   font-size: 0.85rem;
-  color: #757575;
+  color: var(--stu-gray-500);
   margin-top: 4px;
+}
+
+.login-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--stu-danger-light);
+  color: #991B1B;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--stu-primary);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  margin-top: 4px;
+}
+
+.login-submit:hover {
+  background: var(--stu-primary-600);
+}
+
+.login-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    margin: 16px;
+    padding: 28px;
+  }
+
+  .login-app-name {
+    font-size: 1.3rem;
+  }
 }
 </style>
