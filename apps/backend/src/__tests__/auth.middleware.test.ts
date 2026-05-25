@@ -10,7 +10,10 @@ jest.mock('../utils/tokenBlacklist', () => ({
 
 import * as blacklistModule from '../utils/tokenBlacklist';
 
-const SECRET = 'dev_secret';
+const SECRET = 'unit_test_secret';
+
+beforeAll(() => { process.env.JWT_SECRET = SECRET; });
+afterAll(() => { delete process.env.JWT_SECRET; });
 
 function mockRes(): Response {
   const res = {} as Response;
