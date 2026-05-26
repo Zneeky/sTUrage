@@ -5,7 +5,7 @@ import { AuthRequest } from '../middleware/auth';
 import { getCurrentStock, getMovementByPeriod, getLowStockProducts } from '../services/report.service';
 
 type ReportData = Record<string, unknown>[];
-type StockProduct = Awaited<ReturnType<typeof getCurrentStock>>[number];
+type StockProduct = Awaited<ReturnType<typeof getCurrentStock>>['data'][number];
 type Movement = Awaited<ReturnType<typeof getMovementByPeriod>>[number];
 type LowProduct = Awaited<ReturnType<typeof getLowStockProducts>>[number];
 
@@ -13,37 +13,36 @@ function sendJson(res: Response, data: ReportData) {
   res.json({ data });
 }
 
+const PDF_LINE_HEIGHT = 18;
+const PDF_MARGIN = 40;
+
 async function sendPdf(res: Response, title: string, headers: string[], rows: string[][]) {
-  // STUR-64: stream directly to response - no in-memory accumulation
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `attachment; filename="${title.replace(/\s+/g, '_')}.pdf"`);
 
-  const doc = new PDFDocument({ margin: 40, size: 'A4' });
+  const doc = new PDFDocument({ margin: PDF_MARGIN, size: 'A4' });
   doc.pipe(res);
 
   doc.fontSize(16).text(title, { align: 'center' });
   doc.fontSize(10).text(`Generated: ${new Date().toISOString()}`, { align: 'center' });
   doc.moveDown();
 
-  const colWidth = (doc.page.width - 80) / headers.length;
+  const colWidth = (doc.page.width - PDF_MARGIN * 2) / headers.length;
   let y = doc.y;
 
   // Header row
   doc.font('Helvetica-Bold');
-  headers.forEach((h, i) => doc.text(h, 40 + i * colWidth, y, { width: colWidth - 4, lineBreak: false }));
-  doc.moveDown(0.5);
-  doc.moveTo(40, doc.y).lineTo(doc.page.width - 40, doc.y).stroke();
-  doc.moveDown(0.5);
+  headers.forEach((h, i) => doc.text(h, PDF_MARGIN + i * colWidth, y, { width: colWidth - 4, lineBreak: false }));
+  y += PDF_LINE_HEIGHT;
+  doc.moveTo(PDF_MARGIN, y - 4).lineTo(doc.page.width - PDF_MARGIN, y - 4).stroke();
 
   doc.font('Helvetica');
-  // Process in chunks of 100 rows to keep memory bounded
   for (let i = 0; i < rows.length; i += 100) {
     const chunk = rows.slice(i, i + 100);
     for (const row of chunk) {
-      y = doc.y;
-      if (y > doc.page.height - 60) { doc.addPage(); y = doc.y; }
-      row.forEach((cell, ci) => doc.text(cell, 40 + ci * colWidth, y, { width: colWidth - 4, lineBreak: false }));
-      doc.moveDown(0.4);
+      if (y > doc.page.height - 60) { doc.addPage(); y = PDF_MARGIN; }
+      row.forEach((cell, ci) => doc.text(cell, PDF_MARGIN + ci * colWidth, y, { width: colWidth - 4, lineBreak: false }));
+      y += PDF_LINE_HEIGHT;
     }
   }
 
@@ -64,12 +63,18 @@ async function sendExcel(res: Response, title: string, headers: string[], rows: 
 export async function currentStockReport(req: AuthRequest, res: Response, next: NextFunction) {
   try {
     const format = (req.query.format as string) || 'json';
-    const data = await getCurrentStock();
 
-    if (format === 'json') return sendJson(res, data as ReportData);
+    if (format === 'json') {
+      const page = Math.max(1, parseInt(req.query.page as string) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 50));
+      const result = await getCurrentStock(page, limit);
+      return res.json({ data: result.data, total: result.total, page: result.page, limit: result.limit, totalPages: result.totalPages });
+    }
 
+    // PDF / Excel — fetch all
+    const result = await getCurrentStock(1, 10_000);
     const headers = ['SKU', 'Name', 'Category', 'Unit', 'Min Stock', 'Total Stock'];
-    const rows = data.map((p: StockProduct) => [
+    const rows = result.data.map((p: StockProduct) => [
       p.sku,
       p.name,
       p.category.name,

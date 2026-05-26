@@ -1,16 +1,22 @@
 import prisma from '../utils/prisma';
 
-export async function getCurrentStock() {
-  return prisma.product.findMany({
-    where: { isActive: true },
-    select: {
-      id: true, sku: true, name: true, unit: true, minStock: true,
-      category: { select: { name: true } },
-      supplier: { select: { name: true } },
-      stockItems: { select: { quantity: true, warehouse: { select: { name: true } } } },
-    },
-    orderBy: { name: 'asc' },
-  });
+export async function getCurrentStock(page = 1, limit = 50) {
+  const [data, total] = await Promise.all([
+    prisma.product.findMany({
+      where: { isActive: true },
+      select: {
+        id: true, sku: true, name: true, unit: true, minStock: true,
+        category: { select: { name: true } },
+        supplier: { select: { name: true } },
+        stockItems: { select: { quantity: true, warehouse: { select: { id: true, name: true } } } },
+      },
+      orderBy: { name: 'asc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.product.count({ where: { isActive: true } }),
+  ]);
+  return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
 }
 
 export async function getMovementByPeriod(dateFrom?: string, dateTo?: string) {
