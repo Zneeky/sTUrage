@@ -157,3 +157,10 @@ body {
   .q-page { padding: 20px 16px; }
   .filter-bar { flex-direction: column; align-items: stretch; }
 }
+
+/* Center the browser native spin buttons vertically inside q-input */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  height: auto;
+  margin: auto 0;
+}
