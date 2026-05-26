@@ -20,7 +20,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   const testEmails = [ADMIN_EMAIL, 'new-user@sturage.test', 'target-user@sturage.test'];
-  // Audit logs reference users via userId — delete first to satisfy FK constraint
+  // Audit logs reference users via userId - delete first to satisfy FK constraint
   await prisma.auditLog.deleteMany({
     where: { user: { email: { in: testEmails } } },
   });
@@ -129,7 +129,7 @@ describe('PATCH /api/users/:id/deactivate + activate', () => {
     targetUserId = user.id;
   });
 
-  it('TC-007: deactivates user — isActive becomes false', async () => {
+  it('TC-007: deactivates user - isActive becomes false', async () => {
     const res = await request(app)
       .patch(`/api/users/${targetUserId}/deactivate`)
       .set('Authorization', `Bearer ${adminToken}`);
@@ -138,7 +138,7 @@ describe('PATCH /api/users/:id/deactivate + activate', () => {
     expect(res.body.data.isActive).toBe(false);
   });
 
-  it('TC-007: activates user — isActive becomes true', async () => {
+  it('TC-007: activates user - isActive becomes true', async () => {
     const res = await request(app)
       .patch(`/api/users/${targetUserId}/activate`)
       .set('Authorization', `Bearer ${adminToken}`);

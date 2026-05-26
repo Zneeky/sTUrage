@@ -1,4 +1,4 @@
-# Database Design — STURage
+# Database Design - STURage
 
 > STUR-6 | Sprint 1
 
@@ -29,7 +29,7 @@ Full cardinalities:
 | Product | 1 ── n | StockItem | One StockItem per warehouse |
 | Warehouse | 1 ── n | StockItem | One StockItem per product |
 | Product | 1 ── n | StockMovement | Every movement references a product |
-| User | 1 ── n | StockMovement | createdBy — who recorded the movement |
+| User | 1 ── n | StockMovement | createdBy - who recorded the movement |
 
 ---
 
@@ -42,7 +42,7 @@ Represents a system account. Soft-deleted via `isActive`.
 |---|---|---|---|
 | id | String (CUID) | PK | |
 | email | String | UNIQUE | Login identifier |
-| password | String | | bcrypt hash — **never return in API responses** |
+| password | String | | bcrypt hash - **never return in API responses** |
 | firstName | String | | |
 | lastName | String | | |
 | role | Role enum | default OPERATOR | ADMIN / MANAGER / OPERATOR / VIEWER |
@@ -98,7 +98,7 @@ Physical storage location. Can hold many products via StockItem.
 ---
 
 ### Product
-A stock-keeping unit (SKU). Quantities are **not** stored on Product — they live in StockItem (per warehouse).
+A stock-keeping unit (SKU). Quantities are **not** stored on Product - they live in StockItem (per warehouse).
 
 | Field | Type | Constraints | Notes |
 |---|---|---|---|
@@ -127,7 +127,7 @@ Current quantity of a **product at a specific warehouse**. Kept in sync by Stock
 | warehouseId | String | FK → Warehouse | |
 | updatedAt | DateTime | auto | |
 
-**Unique constraint**: `(productId, warehouseId)` — one record per product-warehouse pair.
+**Unique constraint**: `(productId, warehouseId)` - one record per product-warehouse pair.
 
 ---
 
@@ -144,7 +144,7 @@ Immutable audit log of every quantity change. **Never update or delete records.*
 | createdById | String | FK → User | Who recorded the movement |
 | sourceWarehouseId | String? | optional | Required for OUTBOUND / TRANSFER |
 | targetWarehouseId | String? | optional | Required for INBOUND / TRANSFER |
-| createdAt | DateTime | auto | Immutable — no updatedAt |
+| createdAt | DateTime | auto | Immutable - no updatedAt |
 
 **Movement type field requirements**:
 
@@ -161,33 +161,33 @@ Immutable audit log of every quantity change. **Never update or delete records.*
 
 ### Role
 ```
-ADMIN    — full access, user management, deletions
-MANAGER  — CRUD on products/categories/suppliers, stock movements
-OPERATOR — create stock movements only
-VIEWER   — read-only
+ADMIN    - full access, user management, deletions
+MANAGER  - CRUD on products/categories/suppliers, stock movements
+OPERATOR - create stock movements only
+VIEWER   - read-only
 ```
 
 ### MovementType
 ```
-INBOUND    — arrives at warehouse (purchase, return from customer)
-OUTBOUND   — leaves warehouse (sale, consumption)
-TRANSFER   — moves between warehouses
-ADJUSTMENT — manual correction (count discrepancy, damage write-off)
+INBOUND    - arrives at warehouse (purchase, return from customer)
+OUTBOUND   - leaves warehouse (sale, consumption)
+TRANSFER   - moves between warehouses
+ADJUSTMENT - manual correction (count discrepancy, damage write-off)
 ```
 
 ---
 
 ## Key Design Decisions
 
-1. **StockItem as derived aggregate** — separates current quantity from movement history. Allows querying "how much product X is in warehouse Y" in O(1) without summing all movements.
+1. **StockItem as derived aggregate** - separates current quantity from movement history. Allows querying "how much product X is in warehouse Y" in O(1) without summing all movements.
 
-2. **StockMovement is append-only** — full audit trail; every change is traceable to a user and time. Corrections go through ADJUSTMENT movements.
+2. **StockMovement is append-only** - full audit trail; every change is traceable to a user and time. Corrections go through ADJUSTMENT movements.
 
-3. **Soft deletes** — `isActive: false` on User, Supplier, Warehouse, Product. Preserves referential integrity of historical StockMovements.
+3. **Soft deletes** - `isActive: false` on User, Supplier, Warehouse, Product. Preserves referential integrity of historical StockMovements.
 
-4. **CUID primary keys** — URL-safe, collision-resistant, no sequential enumeration.
+4. **CUID primary keys** - URL-safe, collision-resistant, no sequential enumeration.
 
-5. **Warehouse IDs on StockMovement as raw Strings** (not Prisma relations) — allows querying movements by warehouse without requiring both source and target to always be set.
+5. **Warehouse IDs on StockMovement as raw Strings** (not Prisma relations) - allows querying movements by warehouse without requiring both source and target to always be set.
 
 ---
 

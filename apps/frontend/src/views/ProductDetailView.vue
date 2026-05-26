@@ -20,7 +20,7 @@
             <q-list dense>
               <q-item><q-item-section><q-item-label caption>SKU</q-item-label><q-item-label>{{ product.sku }}</q-item-label></q-item-section></q-item>
               <q-item><q-item-section><q-item-label caption>Category</q-item-label><q-item-label>{{ product.category.name }}</q-item-label></q-item-section></q-item>
-              <q-item><q-item-section><q-item-label caption>Supplier</q-item-label><q-item-label>{{ product.supplier?.name ?? '—' }}</q-item-label></q-item-section></q-item>
+              <q-item><q-item-section><q-item-label caption>Supplier</q-item-label><q-item-label>{{ product.supplier?.name ?? '-' }}</q-item-label></q-item-section></q-item>
               <q-item><q-item-section><q-item-label caption>Unit</q-item-label><q-item-label>{{ product.unit }}</q-item-label></q-item-section></q-item>
               <q-item><q-item-section><q-item-label caption>Min Stock</q-item-label><q-item-label>{{ product.minStock }}</q-item-label></q-item-section></q-item>
               <q-item><q-item-section><q-item-label caption>Status</q-item-label>

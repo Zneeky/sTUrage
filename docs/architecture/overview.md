@@ -1,4 +1,4 @@
-# Architecture Overview — STURage
+# Architecture Overview - STURage
 
 > STUR-60 | Sprint 1
 
@@ -63,10 +63,10 @@ STURage is a web-based warehouse inventory management system. It tracks products
 - Prevents type drift between layers
 
 ### Database
-- PostgreSQL 16 — relational model fits inventory domain (FK constraints, transactions)
+- PostgreSQL 16 - relational model fits inventory domain (FK constraints, transactions)
 - Prisma schema is the single source of truth
-- StockItem: current quantity per (product, warehouse) pair — updated on each movement
-- StockMovement: immutable audit trail — never updated or deleted
+- StockItem: current quantity per (product, warehouse) pair - updated on each movement
+- StockMovement: immutable audit trail - never updated or deleted
 
 ## Data Flow: Stock Movement
 
@@ -77,7 +77,7 @@ POST /api/stock-movements
    rateLimiter ──► authenticate ──► authorize(ADMIN,MANAGER,OPERATOR)
         │
         ▼
-   Validate body (express-validator) — Sprint 2
+   Validate body (express-validator) - Sprint 2
         │
         ▼
    prisma.$transaction([

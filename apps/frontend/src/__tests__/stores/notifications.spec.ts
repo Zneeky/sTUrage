@@ -34,7 +34,7 @@ const mockNotifications = [
   },
 ];
 
-describe('useNotificationsStore — TC-024', () => {
+describe('useNotificationsStore - TC-024', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();

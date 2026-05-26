@@ -1,4 +1,4 @@
-# API Contract — STURage
+# API Contract - STURage
 
 > STUR-7 | Sprint 1
 
@@ -19,7 +19,7 @@
 |------|---------|
 | 200 | OK |
 | 201 | Created |
-| 400 | Validation error — see `details` field |
+| 400 | Validation error - see `details` field |
 | 401 | Missing or invalid JWT |
 | 403 | Valid JWT but insufficient role |
 | 404 | Resource not found |
@@ -52,7 +52,7 @@ No auth required.
 
 ---
 
-## Auth — `/api/auth`
+## Auth - `/api/auth`
 
 ### `POST /api/auth/register`
 Rate-limited (authLimiter). No auth required.
@@ -84,8 +84,8 @@ Rate-limited (authLimiter). No auth required.
 ```
 
 **Errors**
-- `400` — missing fields or password too weak
-- `409` — email already registered
+- `400` - missing fields or password too weak
+- `409` - email already registered
 
 ---
 
@@ -108,7 +108,7 @@ Rate-limited (authLimiter). No auth required.
 ```
 
 **Errors**
-- `401` — invalid credentials
+- `401` - invalid credentials
 
 ---
 
@@ -132,7 +132,7 @@ Requires auth.
 ---
 
 ### `POST /api/auth/logout`
-Requires auth. Client should discard the token — server is stateless.
+Requires auth. Client should discard the token - server is stateless.
 
 **Response 200**
 ```json
@@ -141,7 +141,7 @@ Requires auth. Client should discard the token — server is stateless.
 
 ---
 
-## Products — `/api/products`
+## Products - `/api/products`
 
 All routes require auth.
 
@@ -152,9 +152,9 @@ All routes require auth.
 |-------|------|---------|-------------|
 | page | number | 1 | Page number |
 | limit | number | 20 | Items per page (max 100) |
-| search | string | — | Searches name and SKU |
-| categoryId | string | — | Filter by category |
-| supplierId | string | — | Filter by supplier |
+| search | string | - | Searches name and SKU |
+| categoryId | string | - | Filter by category |
+| supplierId | string | - | Filter by supplier |
 | isActive | boolean | true | Include inactive products |
 
 **Response 200**
@@ -198,11 +198,11 @@ All routes require auth.
 }
 ```
 
-**Response 201** — full product object (same shape as list item)
+**Response 201** - full product object (same shape as list item)
 
 **Errors**
-- `400` — missing required fields
-- `409` — SKU already exists
+- `400` - missing required fields
+- `409` - SKU already exists
 
 ---
 
@@ -231,14 +231,14 @@ All routes require auth.
 ---
 
 ### `PUT /api/products/:id`
-**Roles**: ADMIN, MANAGER. Partial update — include only fields to change.
+**Roles**: ADMIN, MANAGER. Partial update - include only fields to change.
 
 **Request body** (all fields optional)
 ```json
 { "name": "Updated Name", "minStock": 8, "supplierId": "cuid..." }
 ```
 
-**Response 200** — updated product object
+**Response 200** - updated product object
 
 ---
 
@@ -252,7 +252,7 @@ All routes require auth.
 
 ---
 
-## Categories — `/api/categories`
+## Categories - `/api/categories`
 
 All routes require auth.
 
@@ -272,10 +272,10 @@ All routes require auth.
 ```json
 { "name": "Stationery", "description": "Office supplies" }
 ```
-**Response 201** — created category
+**Response 201** - created category
 
 ### `GET /api/categories/:id`
-**Response 200** — single category with `products` array
+**Response 200** - single category with `products` array
 
 ### `PUT /api/categories/:id`
 **Roles**: ADMIN, MANAGER
@@ -285,7 +285,7 @@ All routes require auth.
 
 ---
 
-## Suppliers — `/api/suppliers`
+## Suppliers - `/api/suppliers`
 
 All routes require auth.
 
@@ -306,12 +306,12 @@ Query: `page`, `limit`, `search`, `isActive`
 ```
 
 ### `GET /api/suppliers/:id`
-### `PUT /api/suppliers/:id` — ADMIN, MANAGER
-### `DELETE /api/suppliers/:id` — ADMIN only (soft delete)
+### `PUT /api/suppliers/:id` - ADMIN, MANAGER
+### `DELETE /api/suppliers/:id` - ADMIN only (soft delete)
 
 ---
 
-## Warehouses — `/api/warehouses`
+## Warehouses - `/api/warehouses`
 
 All routes require auth.
 
@@ -326,12 +326,12 @@ All routes require auth.
 ### `GET /api/warehouses/:id`
 Response includes `inventory` array: `[{ productId, productName, sku, quantity }]`
 
-### `PUT /api/warehouses/:id` — ADMIN, MANAGER
-### `DELETE /api/warehouses/:id` — ADMIN only (soft delete)
+### `PUT /api/warehouses/:id` - ADMIN, MANAGER
+### `DELETE /api/warehouses/:id` - ADMIN only (soft delete)
 
 ---
 
-## Stock Movements — `/api/stock-movements`
+## Stock Movements - `/api/stock-movements`
 
 All routes require auth.
 
@@ -348,7 +348,7 @@ All routes require auth.
 | from | ISO date | start of date range |
 | to | ISO date | end of date range |
 
-**Response 200** — paginated list of movements
+**Response 200** - paginated list of movements
 
 ### `POST /api/stock-movements`
 **Roles**: ADMIN, MANAGER, OPERATOR
@@ -416,12 +416,12 @@ All routes require auth.
 ```
 
 **Errors**
-- `400` — missing required warehouse IDs for given type
-- `400` — OUTBOUND/TRANSFER quantity exceeds available stock
-- `404` — product or warehouse not found
+- `400` - missing required warehouse IDs for given type
+- `400` - OUTBOUND/TRANSFER quantity exceeds available stock
+- `404` - product or warehouse not found
 
 ### `GET /api/stock-movements/:id`
-**Response 200** — single movement object
+**Response 200** - single movement object
 
 ---
 
@@ -430,7 +430,7 @@ All routes require auth.
 | Endpoint | VIEWER | OPERATOR | MANAGER | ADMIN |
 |----------|--------|----------|---------|-------|
 | GET (all lists) | ✓ | ✓ | ✓ | ✓ |
-| POST products/categories/suppliers/warehouses | — | — | ✓ | ✓ |
-| PUT products/categories/suppliers/warehouses | — | — | ✓ | ✓ |
-| DELETE any | — | — | — | ✓ |
-| POST stock-movements | — | ✓ | ✓ | ✓ |
+| POST products/categories/suppliers/warehouses | - | - | ✓ | ✓ |
+| PUT products/categories/suppliers/warehouses | - | - | ✓ | ✓ |
+| DELETE any | - | - | - | ✓ |
+| POST stock-movements | - | ✓ | ✓ | ✓ |

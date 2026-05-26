@@ -14,7 +14,7 @@ function sendJson(res: Response, data: ReportData) {
 }
 
 async function sendPdf(res: Response, title: string, headers: string[], rows: string[][]) {
-  // STUR-64: stream directly to response — no in-memory accumulation
+  // STUR-64: stream directly to response - no in-memory accumulation
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', `attachment; filename="${title.replace(/\s+/g, '_')}.pdf"`);
 

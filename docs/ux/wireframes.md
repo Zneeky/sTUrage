@@ -1,4 +1,4 @@
-# UX Wireframes — STURage
+# UX Wireframes - STURage
 
 > STUR-8 | Sprint 1
 > 8 screens, text-based wireframes. Vue component names are noted for Sprint 2 implementation.
@@ -29,7 +29,7 @@ Global layout (all protected pages):
 
 ---
 
-## Screen 1 — Login (`/login`)
+## Screen 1 - Login (`/login`)
 
 **Component**: `LoginView.vue`
 **Auth**: Public
@@ -59,12 +59,12 @@ Global layout (all protected pages):
 - On submit: `POST /api/auth/login` → save token to Pinia auth store + localStorage → redirect to `/dashboard`
 - Eye icon toggles password visibility
 - Show inline error on 401 (do not distinguish email vs password for security)
-- Show rate limit warning after 5 failed attempts: "Too many attempts — try again in 15 minutes"
+- Show rate limit warning after 5 failed attempts: "Too many attempts - try again in 15 minutes"
 - Redirect to `/dashboard` if already authenticated
 
 ---
 
-## Screen 2 — Register (`/register`)
+## Screen 2 - Register (`/register`)
 
 **Component**: `RegisterView.vue`
 **Auth**: Public
@@ -98,7 +98,7 @@ Global layout (all protected pages):
 
 ---
 
-## Screen 3 — Dashboard (`/dashboard`)
+## Screen 3 - Dashboard (`/dashboard`)
 
 **Component**: `DashboardView.vue`
 **Auth**: All roles
@@ -125,8 +125,8 @@ Global layout (all protected pages):
 │                                                              │
 │  ⚠ Low Stock Alerts                                         │
 │  ┌──────────────────────────────────────────────────────┐   │
-│  │ • Keyboard — 2 units  (min: 10)  [View Product]      │   │
-│  │ • USB Hub  — 0 units  (min: 5)   [View Product]      │   │
+│  │ • Keyboard - 2 units  (min: 10)  [View Product]      │   │
+│  │ • USB Hub  - 0 units  (min: 5)   [View Product]      │   │
 │  └──────────────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -137,7 +137,7 @@ Global layout (all protected pages):
 
 ---
 
-## Screen 4 — Product List (`/products`)
+## Screen 4 - Product List (`/products`)
 
 **Component**: `ProductsView.vue`
 **Auth**: All roles (ADMIN/MANAGER see edit/delete actions)
@@ -168,7 +168,7 @@ Global layout (all protected pages):
 
 ---
 
-## Screen 5 — Product Detail / Edit (`/products/:id`)
+## Screen 5 - Product Detail / Edit (`/products/:id`)
 
 **Component**: `ProductDetailView.vue`
 **Auth**: All roles (edit actions for ADMIN/MANAGER only)
@@ -177,7 +177,7 @@ Global layout (all protected pages):
 ┌──────────────────────────────────────────────────────────────┐
 │  ← Back to Products                          [Edit] [Delete] │
 ├────────────────────────────┬─────────────────────────────────┤
-│  ELEC-001 — Laptop 15"     │  Stock by Warehouse             │
+│  ELEC-001 - Laptop 15"     │  Stock by Warehouse             │
 │                            │  ┌─────────────────────────┐   │
 │  Category:  Electronics    │  │ Main Warehouse   20 pcs  │   │
 │  Supplier:  TechSupply     │  │ Annex Warehouse   5 pcs  │   │
@@ -205,7 +205,7 @@ Global layout (all protected pages):
 
 ---
 
-## Screen 6 — Categories (`/categories`)
+## Screen 6 - Categories (`/categories`)
 
 **Component**: `CategoriesView.vue`
 **Auth**: All roles (write actions for ADMIN/MANAGER)
@@ -241,11 +241,11 @@ Add / Edit Category (modal):
 
 **Behaviour**:
 - [🗑] disabled with tooltip if category has active products
-- Add/Edit via modal overlay — no page navigation needed
+- Add/Edit via modal overlay - no page navigation needed
 
 ---
 
-## Screen 7 — Stock Movements (`/stock-movements`)
+## Screen 7 - Stock Movements (`/stock-movements`)
 
 **Component**: `StockMovementsView.vue`
 **Auth**: All roles (OPERATOR/MANAGER/ADMIN can create; VIEWER read-only)
@@ -294,7 +294,7 @@ New Movement (modal):
 
 ---
 
-## Screen 8 — Reports (`/reports`)
+## Screen 8 - Reports (`/reports`)
 
 **Component**: `ReportsView.vue`
 **Auth**: All roles (Settings panel ADMIN only)

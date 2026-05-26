@@ -36,7 +36,7 @@ export async function createTransaction(req: AuthRequest, res: Response, next: N
       if (current < quantity) {
         return res.status(422).json({
           status: 422,
-          error: `Not enough stock — only ${current} available, ${quantity} requested`,
+          error: `Not enough stock - only ${current} available, ${quantity} requested`,
           current,
           requested: quantity,
         });

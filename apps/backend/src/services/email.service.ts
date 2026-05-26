@@ -17,7 +17,7 @@ export async function sendLowStockEmail(
 ): Promise<void> {
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail) {
-    logger.warn('ADMIN_EMAIL not set — skipping low stock email');
+    logger.warn('ADMIN_EMAIL not set - skipping low stock email');
     return;
   }
 

@@ -1,4 +1,4 @@
-# CI Pipeline — STURage
+# CI Pipeline - STURage
 
 > STUR-74 | Sprint 1
 
@@ -17,14 +17,14 @@
 
 All three jobs run in **parallel** on every trigger.
 
-### `backend` — Node.js 20, `apps/backend/`
+### `backend` - Node.js 20, `apps/backend/`
 1. Checkout
 2. Setup Node 20 + npm cache
 3. `npm ci`
-4. `npx prisma generate` — generates Prisma client from schema
-5. `npm run lint` — ESLint
-6. `npm run build` — TypeScript compile
-7. `npm test` — Jest
+4. `npx prisma generate` - generates Prisma client from schema
+5. `npm run lint` - ESLint
+6. `npm run build` - TypeScript compile
+7. `npm test` - Jest
 
 Test environment variables injected by CI (no real database needed for unit tests):
 ```
@@ -32,19 +32,19 @@ DATABASE_URL=postgresql://test:test@localhost:5432/test_db
 JWT_SECRET=ci_test_secret_not_for_production
 ```
 
-### `frontend` — Node.js 20, `apps/frontend/`
+### `frontend` - Node.js 20, `apps/frontend/`
 1. Checkout
 2. Setup Node 20 + npm cache
 3. `npm ci`
-4. `npm run lint` — ESLint
-5. `npm run build` — `vue-tsc && vite build`
-6. `npm test` — Vitest
+4. `npm run lint` - ESLint
+5. `npm run build` - `vue-tsc && vite build`
+6. `npm test` - Vitest
 
-### `shared` — Node.js 20, `packages/shared/`
+### `shared` - Node.js 20, `packages/shared/`
 1. Checkout
 2. Setup Node 20 + npm cache
 3. `npm ci`
-4. `npm run build` — TypeScript compile
+4. `npm run build` - TypeScript compile
 
 ## Caching
 

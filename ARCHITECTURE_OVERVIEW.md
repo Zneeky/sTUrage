@@ -1,4 +1,4 @@
-# STURage — Architecture Overview
+# STURage - Architecture Overview
 
 > **System:** Система за складова наличност (University Warehouse Inventory Management System)  
 > **Document purpose:** Technical reference for onboarding, thesis writing, presentations, and future refactoring.  
@@ -273,8 +273,8 @@ All routes are mounted at `/api` in `app.ts`.
 
 | Method | Path | Auth | Roles | Handler |
 |---|---|---|---|---|
-| POST | `/api/auth/register` | authLimiter | — | `register` |
-| POST | `/api/auth/login` | authLimiter | — | `login` |
+| POST | `/api/auth/register` | authLimiter | - | `register` |
+| POST | `/api/auth/login` | authLimiter | - | `login` |
 | POST | `/api/auth/logout` | authenticate | any | `logout` |
 | GET | `/api/auth/me` | authenticate | any | `me` |
 
@@ -333,7 +333,7 @@ Same pattern as Products (GET any, POST/PUT ADMIN+MANAGER, DELETE ADMIN).
 
 | Method | Path | Auth | Notes |
 |---|---|---|---|
-| GET | `/api/health` | — | No rate limit, no auth; returns 200 |
+| GET | `/api/health` | - | No rate limit, no auth; returns 200 |
 
 ### Authentication and authorization (`src/middleware/auth.ts`)
 
@@ -350,7 +350,7 @@ Request
 
 ### Business logic organization
 
-There is no formal service layer for CRUD operations — logic lives in controllers, which call `prisma` directly. The service layer exists for:
+There is no formal service layer for CRUD operations - logic lives in controllers, which call `prisma` directly. The service layer exists for:
 - **Notification service:** low-stock threshold evaluation + SSE broadcast + email
 - **Email service:** Nodemailer wrapper
 - **Report service:** ExcelJS / PDFKit document generation
@@ -460,7 +460,7 @@ CORS on the backend (`app.ts`) allows only the origin specified by `process.env.
 ### Install dependencies
 
 ```bash
-# From repository root — installs all workspaces
+# From repository root - installs all workspaces
 npm install
 ```
 
@@ -606,8 +606,8 @@ docker compose -f docker-compose.prod.yml up --build
 
 - **Database:** PostgreSQL 16
 - **ORM:** Prisma 5 (schema at `apps/backend/prisma/schema.prisma`)
-- **Migrations:** Prisma Migrate — versioned SQL migrations in `apps/backend/prisma/migrations/`
-- **Seed:** `apps/backend/prisma/seed.ts` — bootstraps two users, two categories, one supplier, two warehouses, two products, and initial stock
+- **Migrations:** Prisma Migrate - versioned SQL migrations in `apps/backend/prisma/migrations/`
+- **Seed:** `apps/backend/prisma/seed.ts` - bootstraps two users, two categories, one supplier, two warehouses, two products, and initial stock
 
 ### Entity model
 
@@ -651,7 +651,7 @@ enum NotificationType { LOW_STOCK, OUT_OF_STOCK }
 ### ORM usage
 
 - `apps/backend/src/utils/prisma.ts` exposes a singleton `PrismaClient`.
-- All database access is through Prisma's type-safe query builder — no raw SQL in application code.
+- All database access is through Prisma's type-safe query builder - no raw SQL in application code.
 - Soft deletes are enforced manually in controllers (set `isActive: false`; filter `where: { isActive: true }`).
 
 ### Connection string
@@ -670,21 +670,21 @@ The notification system (`GET /api/notifications/stream`) uses Server-Sent Event
 
 ### Token blacklist (`src/utils/tokenBlacklist.ts`)
 
-Logout is implemented by adding the JWT string to an in-memory `Set`. A `setTimeout` auto-removes each entry after its remaining TTL. This gives correct logout semantics without requiring a database round-trip on every request. **Limitation:** the blacklist is lost on server restart — logged-out tokens become valid again. The code comment explicitly notes this as an MVP decision and recommends Redis for production.
+Logout is implemented by adding the JWT string to an in-memory `Set`. A `setTimeout` auto-removes each entry after its remaining TTL. This gives correct logout semantics without requiring a database round-trip on every request. **Limitation:** the blacklist is lost on server restart - logged-out tokens become valid again. The code comment explicitly notes this as an MVP decision and recommends Redis for production.
 
 ### Immutable stock movement log
 
-`StockMovement` is append-only — no controller or route exposes an UPDATE or DELETE for movements. This is enforced at the API layer (no `PUT /api/stock-movements/:id`). Combined with the `AuditLog` table for all other mutations, the system maintains a complete, tamper-evident audit trail suitable for a warehouse context.
+`StockMovement` is append-only - no controller or route exposes an UPDATE or DELETE for movements. This is enforced at the API layer (no `PUT /api/stock-movements/:id`). Combined with the `AuditLog` table for all other mutations, the system maintains a complete, tamper-evident audit trail suitable for a warehouse context.
 
 ### Notification deduplication
 
-`notification.service.checkLowStock()` queries for an existing unread notification of the same type for the same product before creating a new one. This prevents notification spam — one LOW_STOCK alert per product remains until the operator marks it read.
+`notification.service.checkLowStock()` queries for an existing unread notification of the same type for the same product before creating a new one. This prevents notification spam - one LOW_STOCK alert per product remains until the operator marks it read.
 
 ### Dual-quantity tracking
 
 The system uses two separate structures for stock:
-- **`StockItem`** — current quantity per `(product, warehouse)` pair, updated on every movement.
-- **`StockMovement`** — historical record of every change, never modified.
+- **`StockItem`** - current quantity per `(product, warehouse)` pair, updated on every movement.
+- **`StockMovement`** - historical record of every change, never modified.
 
 This separation allows both live inventory queries (fast, indexed `StockItem` lookup) and full audit history without recalculating from movements.
 
@@ -698,7 +698,7 @@ Both backend and frontend Dockerfiles use multi-stage builds with named targets 
 
 ### Report generation
 
-`exceljs` and `pdfkit` are used server-side to generate `.xlsx` and `.pdf` reports. Files are streamed directly to the HTTP response — no intermediate file storage.
+`exceljs` and `pdfkit` are used server-side to generate `.xlsx` and `.pdf` reports. Files are streamed directly to the HTTP response - no intermediate file storage.
 
 ### Areas of technical debt and risk
 
@@ -767,7 +767,7 @@ sequenceDiagram
     C->>C: bcrypt.compare(password, hash)
     C-->>E: { token, user }
     E-->>A: 200 { data: { token, user } }
-    A->>A: Response interceptor (2xx — pass through)
+    A->>A: Response interceptor (2xx - pass through)
     A-->>V: { token, user }
     V->>V: authStore.token = token (localStorage)
     V->>U: router.push('/dashboard')

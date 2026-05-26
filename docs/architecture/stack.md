@@ -1,4 +1,4 @@
-# Architecture Stack & Implementation Plan — STURage
+# Architecture Stack & Implementation Plan - STURage
 
 > STUR-60 | Sprint 1
 
@@ -39,7 +39,7 @@ STURage is a warehouse inventory management system built as a monorepo. The stac
                            │ Prisma ORM
 ┌──────────────────────────▼──────────────────────────────┐
 │              PostgreSQL 16 (port 5432)                  │
-│         sturage_db — full relational schema             │
+│         sturage_db - full relational schema             │
 └─────────────────────────────────────────────────────────┘
 ```
 

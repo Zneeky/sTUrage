@@ -76,7 +76,7 @@ async function handleLogin() {
     if (status === 401) {
       errorMsg.value = 'Invalid email or password.';
     } else if (status === 429) {
-      errorMsg.value = 'Too many login attempts — try again in 15 minutes.';
+      errorMsg.value = 'Too many login attempts - try again in 15 minutes.';
     } else {
       errorMsg.value = 'Something went wrong. Please try again.';
     }

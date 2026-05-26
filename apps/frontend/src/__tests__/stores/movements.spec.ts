@@ -63,17 +63,17 @@ describe('useMovementsStore', () => {
     );
   });
 
-  // TC-014: Date range validation — "To" must not be before "From"
+  // TC-014: Date range validation - "To" must not be before "From"
   it('TC-014: validation rule rejects "To" date before "From" date', () => {
     const from = '2025-06-15';
     // Mirror of the Quasar rule used in StockMovementsView
     const rule = (v: string) =>
       !v || !from || v >= from || 'Must be on or after From date';
 
-    expect(rule('2025-06-01')).toBe('Must be on or after From date'); // before from — invalid
-    expect(rule('2025-06-15')).toBe(true); // same date — valid
-    expect(rule('2025-07-01')).toBe(true); // after — valid
-    expect(rule('')).toBe(true);           // empty — valid (no range)
+    expect(rule('2025-06-01')).toBe('Must be on or after From date'); // before from - invalid
+    expect(rule('2025-06-15')).toBe(true); // same date - valid
+    expect(rule('2025-07-01')).toBe(true); // after - valid
+    expect(rule('')).toBe(true);           // empty - valid (no range)
   });
 
   it('TC-014: onFilterChange guard skips fetch when dateFrom > dateTo', async () => {

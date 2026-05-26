@@ -1,5 +1,5 @@
 // ============================================================
-// STURage — Prisma Schema
+// STURage - Prisma Schema
 // Sprint 1: STUR-6 | Sprint 2: STUR-13, STUR-15, STUR-77
 //
 // Single source of truth for the database.
@@ -136,7 +136,7 @@ model StockItem {
   @@map("stock_items")
 }
 
-// Append-only audit log — never updated or deleted
+// Append-only audit log - never updated or deleted
 model StockMovement {
   id        String       @id @default(cuid())
   type      MovementType
@@ -164,7 +164,7 @@ enum NotificationType {
   OUT_OF_STOCK
 }
 
-// Stock alert — dedup by (productId, type) while unread (STUR-63 dedup)
+// Stock alert - dedup by (productId, type) while unread (STUR-63 dedup)
 model Notification {
   id        String           @id @default(cuid())
   type      NotificationType @default(LOW_STOCK)

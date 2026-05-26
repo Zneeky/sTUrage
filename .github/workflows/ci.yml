@@ -16,7 +16,7 @@ on:
 jobs:
   # ── Backend ────────────────────────────────────────────────
   backend:
-    name: "Backend — lint, build, test"
+    name: "Backend - lint, build, test"
     runs-on: ubuntu-latest
 
     services:
@@ -73,7 +73,7 @@ jobs:
 
   # ── Frontend ───────────────────────────────────────────────
   frontend:
-    name: "Frontend — lint, build, test"
+    name: "Frontend - lint, build, test"
     runs-on: ubuntu-latest
 
     steps:
@@ -101,7 +101,7 @@ jobs:
 
   # ── Shared package ─────────────────────────────────────────
   shared:
-    name: "Shared — build"
+    name: "Shared - build"
     runs-on: ubuntu-latest
 
     steps:

@@ -126,7 +126,7 @@ describe('GET /api/stock-movements', () => {
     expect(typeof res.body.totalPages).toBe('number');
   });
 
-  it('TC-016: respects limit — returns at most limit items', async () => {
+  it('TC-016: respects limit - returns at most limit items', async () => {
     const res = await request(app)
       .get('/api/stock-movements')
       .query({ page: 1, limit: 1 })

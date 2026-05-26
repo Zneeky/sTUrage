@@ -35,7 +35,7 @@ services:
       JWT_EXPIRES_IN:          ${JWT_EXPIRES_IN:-7d}
       RATE_LIMIT_WINDOW_MS:    ${RATE_LIMIT_WINDOW_MS:-900000}
       RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-100}
-    # No ports — backend is only reachable through NGINX
+    # No ports - backend is only reachable through NGINX
     networks:
       - db
       - web

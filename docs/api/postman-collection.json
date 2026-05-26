@@ -2,7 +2,7 @@
   "info": {
     "name": "STURage API",
     "_postman_id": "sturage-api-v1",
-    "description": "STURage Warehouse Inventory API — Sprint 1\n\nBase URL: http://localhost:3000/api\n\nWorkflow:\n1. Run 'Login' to set the {{token}} variable automatically.\n2. All other requests use {{token}} via the collection-level Authorization header.",
+    "description": "STURage Warehouse Inventory API - Sprint 1\n\nBase URL: http://localhost:3000/api\n\nWorkflow:\n1. Run 'Login' to set the {{token}} variable automatically.\n2. All other requests use {{token}} via the collection-level Authorization header.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -91,7 +91,7 @@
           "request": {
             "method": "POST",
             "url": "{{baseUrl}}/auth/logout",
-            "description": "Stateless logout — client discards the token."
+            "description": "Stateless logout - client discards the token."
           }
         }
       ]

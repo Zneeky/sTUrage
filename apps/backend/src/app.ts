@@ -9,7 +9,7 @@ import routes from './routes';
 
 const app = express();
 
-// Health — before rate limiter, no auth
+// Health - before rate limiter, no auth
 app.get('/api/health', (_req, res) => {
   res.json({
     status: 'ok',

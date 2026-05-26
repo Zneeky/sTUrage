@@ -121,7 +121,7 @@ const columns = [
   { name: 'sku',      label: 'SKU',      field: 'sku',      align: 'left' as const, sortable: true },
   { name: 'name',     label: 'Name',     field: 'name',     align: 'left' as const, sortable: true },
   { name: 'category', label: 'Category', field: (r: Product) => r.category.name, align: 'left' as const },
-  { name: 'supplier', label: 'Supplier', field: (r: Product) => r.supplier?.name ?? '—', align: 'left' as const },
+  { name: 'supplier', label: 'Supplier', field: (r: Product) => r.supplier?.name ?? '-', align: 'left' as const },
   { name: 'stock',    label: 'Stock',    field: 'stockItems', align: 'center' as const },
   { name: 'actions',  label: '',         field: 'id',        align: 'right' as const },
 ];

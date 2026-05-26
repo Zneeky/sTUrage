@@ -63,10 +63,10 @@ const selected = ref<Supplier | null>(null);
 
 const columns = [
   { name: 'name',        label: 'Name',         field: 'name',        align: 'left' as const, sortable: true },
-  { name: 'contactName', label: 'Contact',      field: (r: Supplier) => r.contactName ?? '—', align: 'left' as const },
-  { name: 'email',       label: 'Email',        field: (r: Supplier) => r.email       ?? '—', align: 'left' as const },
-  { name: 'phone',       label: 'Phone',        field: (r: Supplier) => r.phone       ?? '—', align: 'left' as const },
-  { name: 'address',     label: 'Address',      field: (r: Supplier) => r.address     ?? '—', align: 'left' as const },
+  { name: 'contactName', label: 'Contact',      field: (r: Supplier) => r.contactName ?? '-', align: 'left' as const },
+  { name: 'email',       label: 'Email',        field: (r: Supplier) => r.email       ?? '-', align: 'left' as const },
+  { name: 'phone',       label: 'Phone',        field: (r: Supplier) => r.phone       ?? '-', align: 'left' as const },
+  { name: 'address',     label: 'Address',      field: (r: Supplier) => r.address     ?? '-', align: 'left' as const },
   { name: 'actions',     label: '',             field: 'id',          align: 'right' as const },
 ];
 

@@ -211,9 +211,9 @@ async function main() {
   const movements: Prisma.StockMovementCreateManyInput[] = [
     // ── February 2026: initial stock intake ──────────────────
     { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 25, productId: laptop.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
-    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 10, productId: laptop.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock — annex' },
+    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 10, productId: laptop.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock - annex' },
     { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 20, productId: monitor.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Initial stock' },
-    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 8, productId: monitor.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock — annex' },
+    { createdAt: d('2026-02-03'), type: MovementType.INBOUND, quantity: 8, productId: monitor.id, targetWarehouseId: annexWarehouse.id, createdById: manager.id, note: 'Initial stock - annex' },
     { createdAt: d('2026-02-05'), type: MovementType.INBOUND, quantity: 40, productId: keyboard.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Bulk keyboard order' },
     { createdAt: d('2026-02-05'), type: MovementType.INBOUND, quantity: 40, productId: mouse.id, targetWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Bulk mouse order' },
     { createdAt: d('2026-02-10'), type: MovementType.INBOUND, quantity: 5, productId: networkSwitch.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Network upgrade batch' },
@@ -264,7 +264,7 @@ async function main() {
 
     // ── May 2026: recent activity (this month) ───────────────
     { createdAt: d('2026-05-05'), type: MovementType.OUTBOUND, quantity: 5, productId: fireExtinguisher.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Installed across campus buildings' },
-    { createdAt: d('2026-05-08'), type: MovementType.ADJUSTMENT, quantity: 2, productId: keyboard.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Inventory count correction — 2 units found in storage' },
+    { createdAt: d('2026-05-08'), type: MovementType.ADJUSTMENT, quantity: 2, productId: keyboard.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Inventory count correction - 2 units found in storage' },
     { createdAt: d('2026-05-12'), type: MovementType.ADJUSTMENT, quantity: -3, productId: pens.id, targetWarehouseId: mainWarehouse.id, createdById: manager.id, note: 'Shrinkage adjustment after quarterly audit' },
     { createdAt: d('2026-05-19'), type: MovementType.ADJUSTMENT, quantity: -1, productId: monitor.id, targetWarehouseId: mainWarehouse.id, createdById: admin.id, note: 'Damaged unit written off' },
     { createdAt: d('2026-05-22'), type: MovementType.OUTBOUND, quantity: 20, productId: paper.id, sourceWarehouseId: mainWarehouse.id, createdById: operator.id, note: 'Print room monthly allocation' },

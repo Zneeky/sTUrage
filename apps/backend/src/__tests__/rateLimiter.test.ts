@@ -12,7 +12,7 @@ function makeLimitedApp(max: number) {
     max,
     standardHeaders: true,
     legacyHeaders: false,
-    message: { status: 429, error: 'Too many requests — slow down.' },
+    message: { status: 429, error: 'Too many requests - slow down.' },
   });
   testApp.use(express.json());
   testApp.post('/limited', limiter, (_req, res) => res.json({ ok: true }));
@@ -32,8 +32,8 @@ describe('TC-022: Rate limiter middleware', () => {
   it('returns 429 with error message after limit is exceeded', async () => {
     const app = makeLimitedApp(2);
     await request(app).post('/limited'); // 1
-    await request(app).post('/limited'); // 2 — at limit
-    const res = await request(app).post('/limited'); // 3 — over limit
+    await request(app).post('/limited'); // 2 - at limit
+    const res = await request(app).post('/limited'); // 3 - over limit
 
     expect(res.status).toBe(429);
     expect(res.body.error).toMatch(/too many/i);

@@ -82,7 +82,7 @@ const selected = ref<Warehouse | null>(null);
 const columns = [
   { name: 'name',        label: 'Name',        field: 'name',        align: 'left' as const, sortable: true },
   { name: 'location',    label: 'Location',    field: 'location',    align: 'left' as const },
-  { name: 'description', label: 'Description', field: (r: Warehouse) => r.description ?? '—', align: 'left' as const },
+  { name: 'description', label: 'Description', field: (r: Warehouse) => r.description ?? '-', align: 'left' as const },
   { name: 'status',      label: 'Status',      field: 'isActive',    align: 'left' as const },
   { name: 'actions',     label: '',            field: 'id',          align: 'right' as const },
 ];

@@ -1,4 +1,4 @@
-# STURage — Система за складова наличност
+# STURage - Система за складова наличност
 
 > University Warehouse Inventory Management System
 
@@ -13,16 +13,16 @@
 
 ## Overview
 
-STURage is a full-stack inventory management system built for university warehouse operations. It tracks products, stock levels, and movements across multiple warehouses — with role-based access control, real-time low-stock alerts, and exportable reports.
+STURage is a full-stack inventory management system built for university warehouse operations. It tracks products, stock levels, and movements across multiple warehouses - with role-based access control, real-time low-stock alerts, and exportable reports.
 
 ### Key Features
 
-- **Role-based access** — four roles: `ADMIN`, `MANAGER`, `OPERATOR`, `VIEWER`
-- **Stock movements** — inbound, outbound, transfer, and adjustment with a full audit trail
-- **Real-time alerts** — low-stock notifications delivered via Server-Sent Events
-- **Reports** — export current stock or movement history as Excel (`.xlsx`) or PDF
-- **Audit log** — every write operation is recorded with actor, entity, and payload
-- **Multi-warehouse** — products tracked per `(product, warehouse)` pair
+- **Role-based access** - four roles: `ADMIN`, `MANAGER`, `OPERATOR`, `VIEWER`
+- **Stock movements** - inbound, outbound, transfer, and adjustment with a full audit trail
+- **Real-time alerts** - low-stock notifications delivered via Server-Sent Events
+- **Reports** - export current stock or movement history as Excel (`.xlsx`) or PDF
+- **Audit log** - every write operation is recorded with actor, entity, and payload
+- **Multi-warehouse** - products tracked per `(product, warehouse)` pair
 
 ---
 
@@ -100,7 +100,7 @@ npm run dev:frontend  # Vite on :5173
 │   ├── backend/          Express REST API · Prisma · controllers · services
 │   └── frontend/         Vue 3 SPA · Pinia stores · Quasar components
 ├── packages/
-│   └── shared/           @sturage/shared — TypeScript types shared across layers
+│   └── shared/           @sturage/shared - TypeScript types shared across layers
 ├── docs/
 │   ├── architecture/     Stack decisions · ADRs
 │   ├── api/              REST contract · Postman collection
@@ -108,7 +108,7 @@ npm run dev:frontend  # Vite on :5173
 │   ├── ux/               Screen wireframes
 │   ├── security/         Rate limiting strategy
 │   └── devops/           CI/CD pipeline docs
-└── .github/workflows/    GitHub Actions — lint · test · build
+└── .github/workflows/    GitHub Actions - lint · test · build
 ```
 
 ---
@@ -119,7 +119,7 @@ All endpoints are prefixed with `/api`. Authentication uses a JWT Bearer token.
 
 | Resource         | Base path              | Min. role     |
 |------------------|------------------------|---------------|
-| Auth             | `/api/auth`            | —             |
+| Auth             | `/api/auth`            | -             |
 | Products         | `/api/products`        | VIEWER        |
 | Categories       | `/api/categories`      | VIEWER        |
 | Suppliers        | `/api/suppliers`       | VIEWER        |
@@ -128,7 +128,7 @@ All endpoints are prefixed with `/api`. Authentication uses a JWT Bearer token.
 | Notifications    | `/api/notifications`   | VIEWER        |
 | Reports          | `/api/reports`         | MANAGER       |
 | Users            | `/api/users`           | ADMIN         |
-| Health           | `/api/health`          | —             |
+| Health           | `/api/health`          | -             |
 
 Full contract: [`docs/api/contract.md`](docs/api/contract.md) · [Postman collection](docs/api/postman-collection.json)
 
@@ -138,8 +138,8 @@ Full contract: [`docs/api/contract.md`](docs/api/contract.md) · [Postman collec
 
 | Variable              | Description                                        | Default                  |
 |-----------------------|----------------------------------------------------|--------------------------|
-| `DATABASE_URL`        | PostgreSQL connection string                       | —                        |
-| `JWT_SECRET`          | Secret for signing tokens — **change in prod**    | —                        |
+| `DATABASE_URL`        | PostgreSQL connection string                       | -                        |
+| `JWT_SECRET`          | Secret for signing tokens - **change in prod**    | -                        |
 | `JWT_EXPIRES_IN`      | Token TTL                                          | `8h`                     |
 | `PORT`                | Backend port                                       | `3000`                   |
 | `FRONTEND_URL`        | Allowed CORS origin                                | `http://localhost:5173`  |

@@ -12,7 +12,7 @@ import {
 
 const router = Router();
 
-// SSE stream — EventSource can't set Authorization headers, so token comes
+// SSE stream - EventSource can't set Authorization headers, so token comes
 // as a query param for this one endpoint only.
 router.get('/stream', (req, res) => {
   const token = req.query.token as string | undefined;

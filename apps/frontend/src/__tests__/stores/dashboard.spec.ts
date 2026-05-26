@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { useDashboardStore } from '../../stores/dashboard';
 
-// vi.mock factories are hoisted — no references to outer variables allowed inside them
+// vi.mock factories are hoisted - no references to outer variables allowed inside them
 vi.mock('../../api/products.api', () => ({
   listProducts: vi.fn().mockResolvedValue({ data: [], total: 42, page: 1, limit: 1, totalPages: 42 }),
 }));
@@ -31,7 +31,7 @@ vi.mock('../../api/reports.api', () => ({
   lowStockReport: vi.fn().mockResolvedValue([{ id: 'p1' }, { id: 'p2' }]),
 }));
 
-describe('useDashboardStore — TC-020', () => {
+describe('useDashboardStore - TC-020', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.clearAllMocks();

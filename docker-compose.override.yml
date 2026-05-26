@@ -1,6 +1,6 @@
 version: "3.9"
 
-# Local development overrides — not committed to production
+# Local development overrides - not committed to production
 # This file is auto-merged with docker-compose.yml by Docker Compose
 
 services:
