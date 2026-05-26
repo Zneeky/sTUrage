@@ -103,6 +103,17 @@ describe('POST /api/products', () => {
 
     expect(res.status).toBe(409);
   });
+
+  // TC-011: Create product without a supplier — supplierId is optional
+  it('TC-011: creates product with no supplier and supplierId is null', async () => {
+    const res = await request(app)
+      .post('/api/products')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ sku: 'TEST-NO-SUPPLIER', name: 'No Supplier Product', categoryId });
+
+    expect(res.status).toBe(201);
+    expect(res.body.data.supplier).toBeNull();
+  });
 });
 
 describe('GET /api/warehouses', () => {
