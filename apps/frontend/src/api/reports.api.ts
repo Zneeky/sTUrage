@@ -1,14 +1,21 @@
 import client from './client';
 
-export async function currentStockReport(format: 'json' | 'pdf' | 'excel') {
+export interface StockPage {
+  data: unknown[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export async function currentStockReport(format: 'json', page?: number, limit?: number): Promise<StockPage>;
+export async function currentStockReport(format: 'pdf' | 'excel'): Promise<Blob>;
+export async function currentStockReport(format: string, page = 1, limit = 20): Promise<StockPage | Blob> {
   if (format === 'json') {
-    const res = await client.get('/reports/current-stock', { params: { format } });
-    return res.data.data as unknown[];
+    const res = await client.get('/reports/current-stock', { params: { format, page, limit } });
+    return res.data as StockPage;
   }
-  const res = await client.get('/reports/current-stock', {
-    params: { format },
-    responseType: 'blob',
-  });
+  const res = await client.get('/reports/current-stock', { params: { format }, responseType: 'blob' });
   return res.data as Blob;
 }
 
@@ -21,10 +28,7 @@ export async function movementReport(params: {
     const res = await client.get('/reports/movement', { params });
     return res.data.data as unknown[];
   }
-  const res = await client.get('/reports/movement', {
-    params,
-    responseType: 'blob',
-  });
+  const res = await client.get('/reports/movement', { params, responseType: 'blob' });
   return res.data as Blob;
 }
 
@@ -33,10 +37,7 @@ export async function lowStockReport(format: 'json' | 'pdf' | 'excel') {
     const res = await client.get('/reports/low-stock', { params: { format } });
     return res.data.data as unknown[];
   }
-  const res = await client.get('/reports/low-stock', {
-    params: { format },
-    responseType: 'blob',
-  });
+  const res = await client.get('/reports/low-stock', { params: { format }, responseType: 'blob' });
   return res.data as Blob;
 }
 
