@@ -21,8 +21,9 @@
           row-key="id"
           :loading="loading.stock"
           flat bordered dense
-          :rows-per-page-options="[]"
-          hide-bottom
+          v-model:pagination="stockPagination"
+          :rows-per-page-options="[10, 20, 50]"
+          @request="onStockRequest"
         />
       </q-tab-panel>
 
@@ -102,6 +103,8 @@ const stockRows = ref<unknown[]>([]);
 const movementRows = ref<unknown[]>([]);
 const lowStockRows = ref<unknown[]>([]);
 
+const stockPagination = ref({ page: 1, rowsPerPage: 20, rowsNumber: 0 });
+
 const stockColumns = [
   { name: 'sku',      label: 'SKU',      field: 'sku',      align: 'left' as const },
   { name: 'name',     label: 'Name',     field: 'name',     align: 'left' as const },
@@ -119,10 +122,21 @@ const movementColumns = [
   { name: 'by',        label: 'By',      field: (r: Record<string, { email: string }>) => r.createdBy?.email, align: 'left' as const },
 ];
 
-async function loadStock() {
+async function loadStock(page = 1, limit = 20) {
   loading.value.stock = true;
-  try { stockRows.value = await currentStockReport('json') as unknown[]; }
-  finally { loading.value.stock = false; }
+  try {
+    const result = await currentStockReport('json', page, limit);
+    stockRows.value = result.data;
+    stockPagination.value.rowsNumber = result.total;
+    stockPagination.value.page = result.page;
+    stockPagination.value.rowsPerPage = result.limit;
+  } finally {
+    loading.value.stock = false;
+  }
+}
+
+function onStockRequest(props: { pagination: { page: number; rowsPerPage: number } }) {
+  loadStock(props.pagination.page, props.pagination.rowsPerPage);
 }
 
 async function loadMovement() {
@@ -144,7 +158,7 @@ async function download(tab: 'stock' | 'movement' | 'lowstock', fmt: 'pdf' | 'ex
     let blob: Blob;
     const ext = fmt === 'pdf' ? 'pdf' : 'xlsx';
     if (tab === 'stock') {
-      blob = await currentStockReport(fmt) as Blob;
+      blob = await currentStockReport(fmt);
       downloadBlob(blob, `Current_Stock.${ext}`);
     } else if (tab === 'movement') {
       blob = await movementReport({ format: fmt, dateFrom: dateFrom.value || undefined, dateTo: dateTo.value || undefined }) as Blob;
