@@ -4,9 +4,9 @@ services:
     container_name: sturage_postgres
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER:?DB_USER is required}
+      POSTGRES_USER:     ${DB_USER:?DB_USER is required}
       POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
-      POSTGRES_DB: ${DB_NAME:-sturage_db}
+      POSTGRES_DB:       ${DB_NAME:-sturage_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -14,6 +14,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - db
 
   backend:
     build:
@@ -26,27 +28,38 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-sturage_db}
-      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
-      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+      NODE_ENV:                production
+      PORT:                    3000
+      DATABASE_URL:            postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-sturage_db}
+      JWT_SECRET:              ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRES_IN:          ${JWT_EXPIRES_IN:-7d}
+      RATE_LIMIT_WINDOW_MS:    ${RATE_LIMIT_WINDOW_MS:-900000}
       RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-100}
-    ports:
-      - "3000:3000"
+    # No ports — backend is only reachable through NGINX
+    networks:
+      - db
+      - web
 
   frontend:
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
       target: production
-    container_name: sturage_frontend
+    container_name: sturage_nginx
     restart: always
     depends_on:
       - backend
     ports:
       - "80:80"
+    networks:
+      - web
+
+networks:
+  db:
+    driver: bridge
+    internal: true   # postgres has no external internet access
+  web:
+    driver: bridge
 
 volumes:
   postgres_data:
