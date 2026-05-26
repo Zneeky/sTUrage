@@ -50,10 +50,8 @@ Thumbs.db
 *.swp
 *.swo
 
-# Claude Code
+# Local workflow files
 .claude/
-
-# Agent / AI workflow artefacts
 skills/
 agentic-workflow/
 CLAUDE.md

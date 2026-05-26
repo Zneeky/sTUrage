@@ -18,7 +18,7 @@ Vue 3 with Composition API, Vite, Pinia (state), Vue Router.
 - React rejected: larger ecosystem but no team advantage at this scale
 
 ## Consequences
-- Frontend agents must use `<script setup lang="ts">` — no Options API
+- All frontend components must use `<script setup lang="ts">` — no Options API
 - State goes in Pinia stores under `src/stores/`
 - Routes are lazy-loaded: `() => import('@/views/XView.vue')`
 - API calls go through a centralised Axios instance (to be created in Sprint 2)

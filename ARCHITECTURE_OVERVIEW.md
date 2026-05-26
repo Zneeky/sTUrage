@@ -59,9 +59,7 @@ The frontend communicates with the backend exclusively through a versioned HTTP 
 | `apps/frontend/src/` | Vue 3 application source: views, components, stores, router, API clients, layouts |
 | `packages/shared/src/` | TypeScript types and enums shared between backend and frontend (`Role`, `MovementType`, `ApiResponse`, `PaginatedResponse`, `ApiError`) |
 | `docs/` | Architecture notes, API contract, wireframes, security and DevOps docs |
-| `agentic-workflow/` | Sprint planning artifacts (sprint plans, decision log, assumptions) |
 | `.github/workflows/` | GitHub Actions CI pipeline |
-| `skills/` | Reusable instruction files for AI-assisted development |
 
 ---
 
