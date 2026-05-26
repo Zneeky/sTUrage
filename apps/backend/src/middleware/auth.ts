@@ -6,6 +6,11 @@ export interface AuthRequest extends Request {
   user?: { id: string; email: string; role: string };
 }
 
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
+
 export function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ status: 401, error: 'No token provided' });
@@ -15,7 +20,7 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret') as {
+    const payload = jwt.verify(token, JWT_SECRET) as {
       id: string; email: string; role: string;
     };
     req.user = payload;
