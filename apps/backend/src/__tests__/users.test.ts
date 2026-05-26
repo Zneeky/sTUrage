@@ -19,9 +19,12 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await prisma.user.deleteMany({
-    where: { email: { in: [ADMIN_EMAIL, 'new-user@sturage.test', 'target-user@sturage.test'] } },
+  const testEmails = [ADMIN_EMAIL, 'new-user@sturage.test', 'target-user@sturage.test'];
+  // Audit logs reference users via userId — delete first to satisfy FK constraint
+  await prisma.auditLog.deleteMany({
+    where: { user: { email: { in: testEmails } } },
   });
+  await prisma.user.deleteMany({ where: { email: { in: testEmails } } });
   await prisma.$disconnect();
 });
 
