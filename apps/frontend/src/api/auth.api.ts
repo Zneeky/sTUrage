@@ -13,6 +13,16 @@ export async function login(email: string, password: string): Promise<{ token: s
   return res.data.data;
 }
 
+export async function register(
+  email: string,
+  password: string,
+  firstName: string,
+  lastName: string,
+): Promise<{ token: string; user: AuthUser }> {
+  const res = await client.post('/auth/register', { email, password, firstName, lastName });
+  return res.data.data;
+}
+
 export async function me(): Promise<AuthUser> {
   const res = await client.get('/auth/me');
   return res.data.data;

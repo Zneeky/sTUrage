@@ -16,7 +16,6 @@ const registerSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  role: z.enum(['ADMIN', 'MANAGER', 'OPERATOR', 'VIEWER']).optional(),
 });
 
 function signToken(payload: { id: string; email: string; role: string }): string {
@@ -52,7 +51,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     const password = await bcrypt.hash(data.password, 10);
 
     const user = await prisma.user.create({
-      data: { email: data.email, password, firstName: data.firstName, lastName: data.lastName, role: data.role ?? 'OPERATOR' },
+      data: { email: data.email, password, firstName: data.firstName, lastName: data.lastName, role: 'VIEWER' },
       select: { id: true, email: true, role: true, firstName: true, lastName: true },
     });
 

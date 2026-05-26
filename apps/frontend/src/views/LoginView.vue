@@ -49,6 +49,11 @@
         {{ loading ? 'Signing in…' : 'Sign In' }}
       </button>
     </q-form>
+
+    <div class="login-footer">
+      Don't have an account?
+      <router-link to="/register" class="login-link">Create one</router-link>
+    </div>
   </div>
 </template>
 
@@ -167,6 +172,23 @@ async function handleLogin() {
 .login-submit:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.login-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--stu-gray-500);
+}
+
+.login-link {
+  color: var(--stu-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 480px) {
