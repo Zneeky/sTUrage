@@ -65,14 +65,8 @@ npm run dev:frontend
 │   ├── ux/               Wireframes
 │   ├── security/         Rate limiting docs
 │   └── devops/           CI/CD docs
-├── agentic-workflow/     Sprint plans, decision logs
-├── skills/               Claude Code instruction files
 └── .github/workflows/    CI pipelines
 ```
-
-## Jira Project
-
-[STUR Sprint Board](https://expbanking.atlassian.net/jira/software/projects/STUR/boards/169/backlog)
 
 ## Default Credentials (seed)
 
