@@ -50,14 +50,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Claude Code
-.claude/
-
-# Agent / AI workflow artefacts
-skills/
-agentic-workflow/
-CLAUDE.md
-
 # Docker
 .docker/
 
