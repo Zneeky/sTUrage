@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import('@/views/LoginView.vue'),
       meta: { layout: 'AuthLayout', public: true },
     },
+    {
+      path: '/register',
+      component: () => import('@/views/RegisterView.vue'),
+      meta: { layout: 'AuthLayout', public: true },
+    },
     { path: '/', redirect: '/dashboard' },
     {
       path: '/dashboard',
