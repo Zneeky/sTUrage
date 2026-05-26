@@ -50,6 +50,12 @@ Thumbs.db
 *.swp
 *.swo
 
+# Local workflow files
+.claude/
+skills/
+agentic-workflow/
+CLAUDE.md
+
 # Docker
 .docker/
 
