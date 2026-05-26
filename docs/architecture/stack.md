@@ -53,8 +53,6 @@ STURage is a warehouse inventory management system built as a monorepo. The stac
 ├── packages/
 │   └── shared/           Shared TypeScript types
 ├── docs/                 All documentation
-├── agentic-workflow/     AI-assisted planning artifacts
-├── skills/               Reusable Claude Code instructions
 └── .github/workflows/    CI pipelines
 ```
 
