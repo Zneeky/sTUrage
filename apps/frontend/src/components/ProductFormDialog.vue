@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="open" persistent>
-    <q-card style="min-width: 500px;">
+    <q-card style="min-width: 540px; max-width: 600px;">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">{{ product ? 'Edit Product' : 'Add Product' }}</div>
         <q-space />
@@ -8,20 +8,20 @@
       </q-card-section>
 
       <q-card-section>
-        <q-form @submit="handleSubmit" class="q-gutter-sm">
-          <div class="row q-col-gutter-sm">
+        <q-form @submit="handleSubmit" class="q-gutter-md">
+          <div class="row q-col-gutter-md">
             <div class="col-6">
-              <q-input v-model="form.sku" label="SKU *" outlined dense :disable="!!product"
-                :rules="[v => !!v || 'SKU is required']" />
+              <q-input v-model="form.sku" label="SKU *" outlined :disable="!!product"
+                :rules="[v => !!v || 'SKU is required']" bottom-slots />
             </div>
             <div class="col-6">
-              <q-input v-model="form.unit" label="Unit" outlined dense />
+              <q-input v-model="form.unit" label="Unit" outlined bottom-slots />
             </div>
           </div>
-          <q-input v-model="form.name" label="Name *" outlined dense
-            :rules="[v => !!v || 'Name is required']" />
-          <q-input v-model="form.description" label="Description" outlined dense type="textarea" rows="2" />
-          <div class="row q-col-gutter-sm">
+          <q-input v-model="form.name" label="Name *" outlined
+            :rules="[v => !!v || 'Name is required']" bottom-slots />
+          <q-input v-model="form.description" label="Description" outlined type="textarea" rows="2" />
+          <div class="row q-col-gutter-md">
             <div class="col-6">
               <q-select
                 v-model="form.categoryId"
@@ -31,8 +31,9 @@
                 emit-value
                 map-options
                 label="Category *"
-                outlined dense
+                outlined
                 :rules="[v => !!v || 'Category is required']"
+                bottom-slots
               />
             </div>
             <div class="col-6">
@@ -44,12 +45,13 @@
                 emit-value
                 map-options
                 label="Supplier"
-                outlined dense
+                outlined
                 clearable
+                bottom-slots
               />
             </div>
           </div>
-          <q-input v-model.number="form.minStock" label="Min Stock" outlined dense type="number" min="0" />
+          <q-input v-model.number="form.minStock" label="Min Stock" outlined type="number" min="0" />
 
           <div class="row justify-end q-gutter-sm q-mt-sm">
             <q-btn label="Cancel" flat v-close-popup />
