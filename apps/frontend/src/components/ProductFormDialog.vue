@@ -123,7 +123,7 @@ async function handleSubmit() {
       description: form.value.description || undefined,
       unit: form.value.unit || undefined,
       categoryId: form.value.categoryId,
-      supplierId: form.value.supplierId || undefined,
+      supplierId: form.value.supplierId || null,
       minStock: form.value.minStock,
     };
     if (props.product) {

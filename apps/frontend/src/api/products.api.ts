@@ -28,7 +28,7 @@ export interface CreateProductDto {
   name: string;
   description?: string;
   categoryId: string;
-  supplierId?: string;
+  supplierId?: string | null;
   unit?: string;
   minStock?: number;
 }

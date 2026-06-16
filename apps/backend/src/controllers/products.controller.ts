@@ -8,7 +8,7 @@ const createSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   categoryId: z.string().min(1),
-  supplierId: z.string().optional(),
+  supplierId: z.string().nullable().optional(),
   unit: z.string().default('pcs'),
   minStock: z.number().int().min(0).default(0),
 });
