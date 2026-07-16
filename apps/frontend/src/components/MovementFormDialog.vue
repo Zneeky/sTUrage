@@ -55,7 +55,10 @@
             emit-value map-options
             label="Target Warehouse *"
             outlined dense
-            :rules="[v => needsTarget ? !!v || 'Target warehouse required' : true]"
+            :rules="[
+              v => needsTarget ? !!v || 'Target warehouse required' : true,
+              v => !(form.type === 'TRANSFER' && !!v && v === form.warehouseId) || 'Must differ from source warehouse',
+            ]"
           />
 
           <q-input
